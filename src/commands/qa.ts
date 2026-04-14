@@ -90,11 +90,11 @@ export const qaCommand = new Command()
   .reset()
   .command("reveal-best")
   .description("ベストアンサーの公開 (commit-reveal ステップ2)")
-  .arguments("<question-id:number> <best-index:number> <runner1:number> <runner2:number> <salt:string>")
-  .action(async (options: any, questionId: number, bestIndex: number, runner1: number, runner2: number, salt: string) => {
+  .arguments("<question-id:number> <best-index:number> <runner1:string> <runner2:string> <salt:string>")
+  .action(async (options: any, questionId: number, bestIndex: number, runner1: string, runner2: string, salt: string) => {
     try {
       const sdk = await createSDK(options);
-      const result = await sdk.revealBestAnswer(questionId, bestIndex, runner1, runner2, salt);
+      const result = await sdk.revealBestAnswer(questionId, bestIndex, BigInt(runner1), BigInt(runner2), salt);
       outputResult({ txHash: result.hash, blockNumber: result.blockNumber }, options);
     } catch (e) {
       outputError(e, options);
