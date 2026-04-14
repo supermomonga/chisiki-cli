@@ -234,7 +234,8 @@ async function fundCKTViaStorage(cktAddr: string, target: string, amount: bigint
 export async function preApproveCKT(privateKey: string): Promise<void> {
   const addresses = ADDRESSES[CHAIN_IDS.BASE_MAINNET];
   const wallet = new ethers.Wallet(privateKey, provider);
-  const ckt = new ethers.Contract(addresses.ckt, CKT_ABI, wallet);
+  const managed = new ethers.NonceManager(wallet);
+  const ckt = new ethers.Contract(addresses.ckt, CKT_ABI, managed);
   const max = ethers.MaxUint256;
   const spenders = [addresses.qaEscrow, addresses.knowledgeStore, addresses.agentRegistry, addresses.hallOfFame, addresses.tempoReward, addresses.report];
   for (const spender of spenders) {
