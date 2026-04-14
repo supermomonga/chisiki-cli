@@ -24,7 +24,7 @@ Wraps the full `@chisiki/sdk` (52 methods) as shell commands. Designed for **aut
 ### Installation
 
 ```bash
-bun install -g chisiki-cli
+bun install -g github:supermomonga/chisiki-cli
 ```
 
 ### Setup
