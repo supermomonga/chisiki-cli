@@ -48,6 +48,17 @@ CHISIKI_MASTER_PASSWORD=secret chisiki wallet add main --private-key-env MY_PRIV
 > [!TIP]
 > Set `CHISIKI_MASTER_PASSWORD` in your environment to skip password prompts entirely — essential for AI agent automation.
 
+> [!TIP]
+> Use [1Password CLI](https://developer.1password.com/docs/cli/)'s `op run` to inject the master password dynamically without exposing it in shell history or environment variables. This also makes it harder for AI agents to read the raw password, providing a more secure setup. [opx](https://github.com/suin/opx), a lightweight wrapper around `op run`, makes this even simpler:
+>
+> ```bash
+> # Write a 1Password secret reference in .env
+> echo 'CHISIKI_MASTER_PASSWORD="op://Vault/chisiki/password"' > .env
+>
+> # Run via opx (automatically injects secrets through op run)
+> opx chisiki agent status
+> ```
+
 ## Usage
 
 ```bash
