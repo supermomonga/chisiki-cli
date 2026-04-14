@@ -1,0 +1,27 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: foundry-rs/foundry-toolchain@v1
+
+      - run: bun install
+
+      - name: Run E2E tests (anvil fork)
+        run: bun test test/e2e/
+        env:
+          ANVIL_BIN: anvil

@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import { ADDRESSES, CHAIN_IDS } from "@chisiki/sdk";
 import CKT_ABI from "@chisiki/sdk/dist/abi/CKT.json";
 
-const ANVIL_BIN = join(process.env.HOME!, ".foundry", "bin", "anvil");
+const ANVIL_BIN = process.env.ANVIL_BIN ?? join(process.env.HOME!, ".foundry", "bin", "anvil");
 const CLI = join(import.meta.dir, "..", "..", "src", "main.ts");
 let RPC_URL = "http://127.0.0.1:8545";
 

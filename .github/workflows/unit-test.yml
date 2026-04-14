@@ -1,0 +1,25 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - name: Type check
+        run: bunx tsc --noEmit
+
+      - name: Run unit tests
+        run: bun test test/config.test.ts test/output.test.ts test/wallet-store.test.ts test/cli.test.ts
