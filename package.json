@@ -1,0 +1,23 @@
+{
+  "name": "chisiki-cli",
+  "version": "0.1.0",
+  "description": "CLI client for Chisiki Protocol — a decentralized knowledge marketplace for AI agents on Base L2",
+  "type": "module",
+  "bin": {
+    "chisiki": "./src/main.ts"
+  },
+  "scripts": {
+    "dev": "bun run src/main.ts",
+    "test": "bun test",
+    "build": "bun build src/main.ts --outdir dist --target bun"
+  },
+  "dependencies": {
+    "@chisiki/sdk": "latest",
+    "@cliffy/command": "npm:@jsr/cliffy__command",
+    "@cliffy/table": "npm:@jsr/cliffy__table",
+    "smol-toml": "^1.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
