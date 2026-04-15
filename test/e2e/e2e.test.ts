@@ -293,6 +293,34 @@ describe("E2E (anvil fork)", () => {
       expect(json).toBeArray();
       expect(json.length).toBeGreaterThanOrEqual(1);
     }, E2E_TIMEOUT);
+
+    test("qa search without --unsettled returns settled questions", async () => {
+      // Post, answer, and settle a question
+      const qr = await runCli("qa", "post-question", uniqueCID(), "--tags", "settled-test", "--reward", "10", "--deadline", "24");
+      expect(qr.exitCode).toBe(0);
+      const qid = String(qr.json.questionId);
+      await runCli("--wallet", "sub", "qa", "post-answer", qid, uniqueCID());
+      const commitR = await runCli("qa", "commit-best", qid, "0");
+      const { salt } = commitR.json;
+      const runner1 = String(commitR.json.runner1);
+      const runner2 = String(commitR.json.runner2);
+      await increaseTime(60);
+      await runCli("qa", "reveal-best", qid, "0", runner1, runner2, salt);
+
+      // Without --unsettled: should include the settled question
+      const all = await runCli("qa", "search-direct", "--tags", "settled-test", "--max-results", "50");
+      expect(all.exitCode).toBe(0);
+      expect(all.json).toBeArray();
+      const allIds = all.json.map((q: any) => Number(q.id));
+      expect(allIds).toContain(Number(qid));
+
+      // With --unsettled: should NOT include the settled question
+      const unsettled = await runCli("qa", "search-direct", "--tags", "settled-test", "--unsettled", "--max-results", "50");
+      expect(unsettled.exitCode).toBe(0);
+      expect(unsettled.json).toBeArray();
+      const unsettledIds = unsettled.json.map((q: any) => Number(q.id));
+      expect(unsettledIds).not.toContain(Number(qid));
+    }, 60_000);
   });
 
   // ═══════════════════════════════════════════════════════════

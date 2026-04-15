@@ -140,7 +140,7 @@ export const qaCommand = new Command()
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
-      const results = await sdk.searchQuestions(options.tags, options.unsettled, options.fromBlock, options.maxResults);
+      const results = await sdk.searchQuestions(options.tags, !!options.unsettled, options.fromBlock, options.maxResults);
       outputResult(results, options);
     } catch (e) {
       outputError(e, options);
@@ -156,7 +156,7 @@ export const qaCommand = new Command()
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
-      const results = await sdk.searchQuestionsDirect(options.tags, options.unsettled, options.maxResults);
+      const results = await sdk.searchQuestionsDirect(options.tags, !!options.unsettled, options.maxResults);
       outputResult(results, options);
     } catch (e) {
       outputError(e, options);
