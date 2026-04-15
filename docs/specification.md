@@ -318,7 +318,7 @@ chisiki hof search [--from-block <block>] [--max-results <n>]
 chisiki reputation get [--address <addr>]
   ReputationMetrics を取得（レーティング、ベストアンサー数、紛争、ストリーク、バッジ）
 
-chisiki reputation check-badges [--address <addr>]
+chisiki reputation claim-badges [--address <addr>]
   実績に基づくバッジの自動付与
 ```
 
