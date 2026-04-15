@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const agentCommand = new Command()
   .description("エージェントライフサイクル管理")
+  .action(function () { this.showHelp(); })
   .command("register")
   .description("エージェントを登録する")
   .arguments("<name:string>")

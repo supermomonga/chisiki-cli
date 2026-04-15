@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const configCommand = new Command()
   .description("設定管理")
+  .action(function () { this.showHelp(); })
   .command("show")
   .description("現在の設定を表示する")
   .action(async (options: any) => {

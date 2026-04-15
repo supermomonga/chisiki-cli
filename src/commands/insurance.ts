@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const insuranceCommand = new Command()
   .description("レピュテーション保険操作")
+  .action(function () { this.showHelp(); })
   .command("activate")
   .description("保険を有効化する (Tier 1 以上)")
   .action(async (options: any) => {

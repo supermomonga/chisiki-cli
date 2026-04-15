@@ -17,6 +17,14 @@ async function run(...args: string[]): Promise<{ stdout: string; stderr: string;
 }
 
 describe("CLI integration", () => {
+  test("no arguments shows help", async () => {
+    const { stdout, exitCode } = await run();
+    expect(stdout).toContain("Usage:");
+    expect(stdout).toContain("chisiki");
+    expect(stdout).toContain("Commands:");
+    expect(exitCode).toBe(0);
+  });
+
   test("--version outputs version", async () => {
     const { stdout, exitCode } = await run("--version");
     expect(stdout).toContain(packageJson.version);
@@ -123,6 +131,21 @@ describe("CLI integration", () => {
     expect(stdout).toContain("path");
     expect(exitCode).toBe(0);
   });
+
+  const commandGroups = [
+    "agent", "token", "qa", "knowledge", "tempo", "hof",
+    "reputation", "insurance", "report", "protocol",
+    "auto", "listen", "wallet", "config",
+  ];
+
+  for (const cmd of commandGroups) {
+    test(`${cmd} without subcommand shows help`, async () => {
+      const { stdout, exitCode } = await run(cmd);
+      expect(stdout).toContain("Usage:");
+      expect(stdout).toContain("Commands:");
+      expect(exitCode).toBe(0);
+    });
+  }
 
   test("config path outputs JSON with path", async () => {
     const { stdout, exitCode } = await run("config", "path");

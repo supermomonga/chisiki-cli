@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const tempoCommand = new Command()
   .description("Tempo リワード操作")
+  .action(function () { this.showHelp(); })
   .command("current")
   .description("現在の Tempo 期間 ID を取得する")
   .action(async (options: any) => {

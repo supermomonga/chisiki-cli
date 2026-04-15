@@ -18,6 +18,7 @@ async function readSecretInput(prompt: string): Promise<string> {
 
 export const walletCommand = new Command()
   .description("ウォレット管理")
+  .action(function () { this.showHelp(); })
   .command("add")
   .description("ウォレットを追加する")
   .arguments("<name:string>")

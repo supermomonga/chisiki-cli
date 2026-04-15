@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const knowledgeCommand = new Command()
   .description("ナレッジストア操作")
+  .action(function () { this.showHelp(); })
   .command("list")
   .description("ナレッジを出品する")
   .arguments("<title:string>")

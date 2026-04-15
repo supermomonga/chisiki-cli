@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const protocolCommand = new Command()
   .description("プロトコル情報")
+  .action(function () { this.showHelp(); })
   .command("rules")
   .description("プロトコル定数を一括取得する")
   .action(async (options: any) => {

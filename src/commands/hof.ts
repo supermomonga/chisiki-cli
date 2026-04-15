@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const hofCommand = new Command()
   .description("Hall of Fame 操作")
+  .action(function () { this.showHelp(); })
   .command("nominate")
   .description("コンテンツをノミネートする (1 CKT burn、Tier 1 以上)")
   .arguments("<author-address:string> <content-cid:string> <arweave-tx-id:string>")

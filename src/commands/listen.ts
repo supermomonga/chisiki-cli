@@ -9,6 +9,7 @@ function bigintReplacer(_key: string, value: unknown): unknown {
 
 export const listenCommand = new Command()
   .description("イベントリスナー (NDJSON 出力)")
+  .action(function () { this.showHelp(); })
   .command("purchases")
   .description("購入イベントをリアルタイム監視する")
   .action(async (options: any) => {

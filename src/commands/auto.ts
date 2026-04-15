@@ -5,6 +5,7 @@ import { spawn } from "node:child_process";
 
 export const autoCommand = new Command()
   .description("自律ワークフロー")
+  .action(function () { this.showHelp(); })
   .command("solve")
   .description("自動問題解決: HoF → Q&A 検索 → 質問投稿の順で自動判断")
   .arguments("<problem-cid:string>")

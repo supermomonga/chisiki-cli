@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const reportCommand = new Command()
   .description("レポート・モデレーション操作")
+  .action(function () { this.showHelp(); })
   .command("submit")
   .description("コンテンツを報告する (1 CKT、Tier 1 以上)")
   .arguments("<content-type:string> <content-id:number> <reason:string>")

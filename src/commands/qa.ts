@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const qaCommand = new Command()
   .description("Q&A 操作")
+  .action(function () { this.showHelp(); })
   .command("post-question")
   .description("質問を投稿する")
   .arguments("<ipfs-cid:string>")

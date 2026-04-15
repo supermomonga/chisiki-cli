@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const tokenCommand = new Command()
   .description("CKT トークン操作")
+  .action(function () { this.showHelp(); })
   .command("balance")
   .description("CKT 残高を取得する")
   .option("--address <addr:string>", "対象アドレス")

@@ -4,6 +4,7 @@ import { outputResult, outputError } from "../lib/output.js";
 
 export const reputationCommand = new Command()
   .description("レピュテーション操作")
+  .action(function () { this.showHelp(); })
   .command("get")
   .description("ReputationMetrics を取得する")
   .option("--address <addr:string>", "対象アドレス")
