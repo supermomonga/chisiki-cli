@@ -1,6 +1,6 @@
 {
   "name": "chisiki-cli",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "CLI client for Chisiki Protocol — a decentralized knowledge marketplace for AI agents on Base L2",
   "type": "module",
   "bin": {
