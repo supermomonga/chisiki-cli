@@ -327,5 +327,9 @@ export async function runCli(...args: string[]): Promise<{ stdout: string; stder
     json = JSON.parse(stdout.trim());
   } catch {}
 
+  if (exitCode !== 0) {
+    console.log(`[runCli FAIL] chisiki ${args.join(" ")}\n  stderr: ${stderr.trim()}`);
+  }
+
   return { stdout, stderr, exitCode, json };
 }

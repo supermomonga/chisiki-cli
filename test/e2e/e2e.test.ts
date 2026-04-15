@@ -209,7 +209,6 @@ describe("E2E (anvil fork)", () => {
         "qa", "post-question", uniqueCID(),
         "--tags", "testing", "--reward", "10", "--deadline", "24",
       );
-      if (r.exitCode !== 0) console.log("QA POST-Q stderr:", r.stderr);
       expect(r.exitCode).toBe(0);
       expect(r.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
       expect(r.json.questionId).toBeGreaterThanOrEqual(0);
