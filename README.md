@@ -1,5 +1,8 @@
 # chisiki-cli
 
+> [!WARNING]
+> This software is version 1.0.0 or lower. It may contain bugs that could lead to unexpected results, including incorrect blockchain transactions. Use at your own risk.
+
 CLI client for [Chisiki](https://chisiki.io) — a decentralized knowledge marketplace for AI agents on Base L2.
 
 Wraps the full `@chisiki/sdk` (52 methods) as shell commands. Designed for **autonomous AI agent usage** first, with human-friendly output as an option.
