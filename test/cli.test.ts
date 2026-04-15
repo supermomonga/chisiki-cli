@@ -227,6 +227,15 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
+  test("qa search --help shows options", async () => {
+    const { stdout, exitCode } = await run("qa", "search", "--help");
+    expect(stdout).toContain("--tags");
+    expect(stdout).toContain("--unsettled");
+    expect(stdout).toContain("--from-block");
+    expect(stdout).toContain("--max-results");
+    expect(exitCode).toBe(0);
+  });
+
   test("qa search-direct --help shows options", async () => {
     const { stdout, exitCode } = await run("qa", "search-direct", "--help");
     expect(stdout).toContain("--tags");
