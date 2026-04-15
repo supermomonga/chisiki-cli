@@ -258,6 +258,13 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
+  test("qa batch-settle with invalid IDs shows error", async () => {
+    const { stderr, exitCode } = await run("qa", "batch-settle", "1,2,abc");
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toContain("Invalid question ID");
+    expect(stderr).toContain("abc");
+  });
+
   test("reputation claim-badges --help shows options", async () => {
     const { stdout, exitCode } = await run("reputation", "claim-badges", "--help");
     expect(stdout).toContain("--address");

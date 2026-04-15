@@ -169,8 +169,14 @@ export const qaCommand = new Command()
   .arguments("<question-ids:string>")
   .action(async (options: any, questionIds: string) => {
     try {
+      const ids = questionIds.split(",").map((id) => {
+        const n = Number(id.trim());
+        if (!Number.isInteger(n) || n < 0) {
+          throw new Error(`Invalid question ID: "${id.trim()}"`);
+        }
+        return n;
+      });
       const sdk = await createSDK(options);
-      const ids = questionIds.split(",").map((id) => Number(id.trim()));
       const result = await sdk.batchSettle(ids);
       outputResult(result, options);
     } catch (e) {
