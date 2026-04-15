@@ -34,6 +34,13 @@ sudo mv chisiki /usr/local/bin/
 
 Available binaries: `chisiki-linux-x64`, `chisiki-linux-arm64`, `chisiki-darwin-arm64`
 
+> [!TIP]
+> If you use [mise](https://mise.jdx.dev), you can install and manage versions with a single command:
+>
+> ```bash
+> mise use -g github:supermomonga/chisiki-cli@latest
+> ```
+
 ### Setup
 
 Initialize config and wallet files:
