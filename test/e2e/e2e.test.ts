@@ -375,8 +375,8 @@ describe("E2E (anvil fork)", () => {
       expect(json).toHaveProperty("totalTxns");
     }, E2E_TIMEOUT);
 
-    test("reputation check-badges returns txHash", async () => {
-      const { json, exitCode } = await runCli("reputation", "check-badges");
+    test("reputation claim-badges returns txHash", async () => {
+      const { json, exitCode } = await runCli("reputation", "claim-badges");
       expect(exitCode).toBe(0);
       expect(json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
     }, E2E_TIMEOUT);

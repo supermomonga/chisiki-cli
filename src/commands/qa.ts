@@ -131,7 +131,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("search")
-  .description("質問を検索する")
+  .description("質問を検索する (eth_getLogs ベース)")
   .option("--tags <tags:string>", "タグフィルター")
   .option("--unsettled", "未決済のみ")
   .option("--from-block <block:number>", "開始ブロック")
@@ -141,6 +141,37 @@ export const qaCommand = new Command()
       const sdk = await createSDK(options);
       const results = await sdk.searchQuestions(options.tags, options.unsettled, options.fromBlock, options.maxResults);
       outputResult(results, options);
+    } catch (e) {
+      outputError(e, options);
+      process.exit(1);
+    }
+  })
+  .reset()
+  .command("search-direct")
+  .description("質問を検索する (オンチェーンカウンター直接参照、無料 RPC 対応)")
+  .option("--tags <tags:string>", "タグフィルター")
+  .option("--unsettled", "未決済のみ")
+  .option("--max-results <n:number>", "最大件数")
+  .action(async (options: any) => {
+    try {
+      const sdk = await createSDK(options);
+      const results = await sdk.searchQuestionsDirect(options.tags, options.unsettled, options.maxResults);
+      outputResult(results, options);
+    } catch (e) {
+      outputError(e, options);
+      process.exit(1);
+    }
+  })
+  .reset()
+  .command("batch-settle")
+  .description("期限切れ質問の一括決済 (各 1 CKT キーパー報酬)")
+  .arguments("<question-ids:string>")
+  .action(async (options: any, questionIds: string) => {
+    try {
+      const sdk = await createSDK(options);
+      const ids = questionIds.split(",").map((id) => Number(id.trim()));
+      const result = await sdk.batchSettle(ids);
+      outputResult(result, options);
     } catch (e) {
       outputError(e, options);
       process.exit(1);

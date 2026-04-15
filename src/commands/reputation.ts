@@ -18,13 +18,13 @@ export const reputationCommand = new Command()
     }
   })
   .reset()
-  .command("check-badges")
+  .command("claim-badges")
   .description("実績に基づくバッジの自動付与")
   .option("--address <addr:string>", "対象アドレス")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
-      const result = await sdk.checkBadges(options.address);
+      const result = await sdk.claimBadges(options.address);
       outputResult({ txHash: result.hash, blockNumber: result.blockNumber }, options);
     } catch (e) {
       outputError(e, options);

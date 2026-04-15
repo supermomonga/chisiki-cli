@@ -57,6 +57,8 @@ describe("CLI integration", () => {
     expect(stdout).toContain("withdraw");
     expect(stdout).toContain("auto-settle");
     expect(stdout).toContain("search");
+    expect(stdout).toContain("search-direct");
+    expect(stdout).toContain("batch-settle");
     expect(exitCode).toBe(0);
   });
 
@@ -164,7 +166,7 @@ describe("CLI integration", () => {
   test("reputation --help shows subcommands", async () => {
     const { stdout, exitCode } = await run("reputation", "--help");
     expect(stdout).toContain("get");
-    expect(stdout).toContain("check-badges");
+    expect(stdout).toContain("claim-badges");
     expect(exitCode).toBe(0);
   });
 
@@ -180,6 +182,26 @@ describe("CLI integration", () => {
     expect(stdout).toContain("purchases");
     expect(stdout).toContain("answers");
     expect(stdout).toContain("questions");
+    expect(exitCode).toBe(0);
+  });
+
+  test("qa search-direct --help shows options", async () => {
+    const { stdout, exitCode } = await run("qa", "search-direct", "--help");
+    expect(stdout).toContain("--tags");
+    expect(stdout).toContain("--unsettled");
+    expect(stdout).toContain("--max-results");
+    expect(exitCode).toBe(0);
+  });
+
+  test("qa batch-settle --help shows arguments", async () => {
+    const { stdout, exitCode } = await run("qa", "batch-settle", "--help");
+    expect(stdout).toContain("question-ids");
+    expect(exitCode).toBe(0);
+  });
+
+  test("reputation claim-badges --help shows options", async () => {
+    const { stdout, exitCode } = await run("reputation", "claim-badges", "--help");
+    expect(stdout).toContain("--address");
     expect(exitCode).toBe(0);
   });
 
