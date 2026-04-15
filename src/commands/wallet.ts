@@ -17,22 +17,22 @@ async function readSecretInput(prompt: string): Promise<string> {
 }
 
 export const walletCommand = new Command()
-  .description("ウォレット管理")
+  .description("Wallet management")
   .action(function () { this.showHelp(); })
   .command("add")
-  .description("ウォレットを追加する")
+  .description("Add a wallet")
   .arguments("<name:string>")
-  .option("--private-key", "対話的に秘密鍵を入力する")
-  .option("--private-key-env <envVar:string>", "環境変数から秘密鍵を取得する")
+  .option("--private-key", "Enter private key interactively")
+  .option("--private-key-env <envVar:string>", "Read private key from environment variable")
   .action(async (options: any, name: string) => {
     try {
       let pk: string;
       if (options.privateKeyEnv) {
         const envValue = process.env[options.privateKeyEnv];
-        if (!envValue) throw new Error(`環境変数 '${options.privateKeyEnv}' が設定されていません`);
+        if (!envValue) throw new Error(`Environment variable '${options.privateKeyEnv}' is not set`);
         pk = envValue;
       } else {
-        pk = await readSecretInput("秘密鍵を入力: ");
+        pk = await readSecretInput("Enter private key: ");
       }
       const address = await addWallet(name, pk);
       outputResult({ name, address }, options);
@@ -43,7 +43,7 @@ export const walletCommand = new Command()
   })
   .reset()
   .command("list")
-  .description("登録済みウォレット一覧を表示する")
+  .description("List registered wallets")
   .action(async (options: any) => {
     try {
       const wallets = await listWallets();
@@ -60,7 +60,7 @@ export const walletCommand = new Command()
   })
   .reset()
   .command("remove")
-  .description("ウォレットを削除する")
+  .description("Remove a wallet")
   .arguments("<name:string>")
   .action(async (options: any, name: string) => {
     try {
@@ -73,13 +73,13 @@ export const walletCommand = new Command()
   })
   .reset()
   .command("set-default")
-  .description("デフォルトウォレットを設定する")
+  .description("Set the default wallet")
   .arguments("<name:string>")
   .action(async (options: any, name: string) => {
     try {
       const wallets = await listWallets();
       if (!wallets.some((w) => w.name === name)) {
-        throw new Error(`ウォレット '${name}' が見つかりません`);
+        throw new Error(`Wallet '${name}' not found`);
       }
       const config = await loadConfig();
       config.default.wallet = name;
@@ -92,7 +92,7 @@ export const walletCommand = new Command()
   })
   .reset()
   .command("export")
-  .description("秘密鍵を表示する (要マスターパスワード確認)")
+  .description("Export private key (requires master password)")
   .arguments("<name:string>")
   .action(async (options: any, name: string) => {
     try {

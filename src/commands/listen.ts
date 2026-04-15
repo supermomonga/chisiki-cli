@@ -8,10 +8,10 @@ function bigintReplacer(_key: string, value: unknown): unknown {
 }
 
 export const listenCommand = new Command()
-  .description("イベントリスナー (NDJSON 出力)")
+  .description("Event listener (NDJSON output)")
   .action(function () { this.showHelp(); })
   .command("purchases")
-  .description("購入イベントをリアルタイム監視する")
+  .description("Monitor purchase events in real-time")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -31,7 +31,7 @@ export const listenCommand = new Command()
   })
   .reset()
   .command("answers")
-  .description("回答イベントをリアルタイム監視する")
+  .description("Monitor answer events in real-time")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -50,7 +50,7 @@ export const listenCommand = new Command()
   })
   .reset()
   .command("questions")
-  .description("新規質問イベントをリアルタイム監視する")
+  .description("Monitor question events in real-time")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

@@ -3,10 +3,10 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const protocolCommand = new Command()
-  .description("プロトコル情報")
+  .description("Protocol information")
   .action(function () { this.showHelp(); })
   .command("rules")
-  .description("プロトコル定数を一括取得する")
+  .description("Get all protocol constants")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -19,7 +19,7 @@ export const protocolCommand = new Command()
   })
   .reset()
   .command("my-status")
-  .description("エージェント総合ステータスを取得する")
+  .description("Get own agent, token, and reputation info")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

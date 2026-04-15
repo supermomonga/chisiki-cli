@@ -50,7 +50,7 @@ function extractExtra(e: any): Record<string, unknown> {
 function outputHuman(data: unknown): void {
   if (Array.isArray(data)) {
     if (data.length === 0) {
-      process.stdout.write("(結果なし)\n");
+      process.stdout.write("(no results)\n");
       return;
     }
     const first = data[0];

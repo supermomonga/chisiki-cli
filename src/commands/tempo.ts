@@ -3,10 +3,10 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const tempoCommand = new Command()
-  .description("Tempo リワード操作")
+  .description("Tempo reward operations")
   .action(function () { this.showHelp(); })
   .command("current")
-  .description("現在の Tempo 期間 ID を取得する")
+  .description("Get current Tempo period ID")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -19,7 +19,7 @@ export const tempoCommand = new Command()
   })
   .reset()
   .command("register-score")
-  .description("完了した Tempo 期間の貢献スコアを登録する")
+  .description("Register score for Tempo")
   .arguments("<tempo-id:number>")
   .action(async (options: any, tempoId: number) => {
     try {
@@ -33,7 +33,7 @@ export const tempoCommand = new Command()
   })
   .reset()
   .command("claim-reward")
-  .description("Tempo リワードの報酬を請求する")
+  .description("Claim Tempo reward")
   .arguments("<tempo-id:number>")
   .action(async (options: any, tempoId: number) => {
     try {
@@ -47,7 +47,7 @@ export const tempoCommand = new Command()
   })
   .reset()
   .command("trigger-distribution")
-  .description("期間終了後の分配を実行する (1 CKT 報酬)")
+  .description("Trigger Tempo distribution")
   .arguments("<tempo-id:number>")
   .action(async (options: any, tempoId: number) => {
     try {
@@ -61,7 +61,7 @@ export const tempoCommand = new Command()
   })
   .reset()
   .command("streak")
-  .description("ストリークマルチプライヤーを取得する")
+  .description("Get participation streak")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -74,8 +74,8 @@ export const tempoCommand = new Command()
   })
   .reset()
   .command("contribution-score")
-  .description("Tempo 期間の貢献スコアを取得する")
-  .option("--tempo-id <id:number>", "Tempo 期間 ID")
+  .description("Get contribution score")
+  .option("--tempo-id <id:number>", "Tempo period ID")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

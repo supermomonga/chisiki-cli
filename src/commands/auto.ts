@@ -4,14 +4,14 @@ import { outputResult, outputError } from "../lib/output.js";
 import { spawn } from "node:child_process";
 
 export const autoCommand = new Command()
-  .description("自律ワークフロー")
+  .description("Autonomous workflows")
   .action(function () { this.showHelp(); })
   .command("solve")
-  .description("自動問題解決: HoF → Q&A 検索 → 質問投稿の順で自動判断")
+  .description("Auto solve: HoF → Q&A search → post question")
   .arguments("<problem-cid:string>")
-  .option("--max-reward <amount:string>", "最大報酬 CKT 額")
-  .option("--deadline <hours:number>", "期限 (時間)")
-  .option("--prefer-premium", "プレミアム質問を優先する")
+  .option("--max-reward <amount:string>", "Max reward amount (CKT)")
+  .option("--deadline <hours:number>", "Deadline (hours)")
+  .option("--prefer-premium", "Prefer premium questions")
   .action(async (options: any, problemCid: string) => {
     try {
       const sdk = await createSDK(options);
@@ -28,11 +28,11 @@ export const autoCommand = new Command()
   })
   .reset()
   .command("earn")
-  .description("自動収益: 質問検索 → 回答 → 期限切れ決済 → Tempo 請求")
-  .option("--answer-generator <command:string>", "回答生成コマンド (stdin: 質問JSON, stdout: 回答CID)", { required: true })
-  .option("--max-questions <n:number>", "最大質問数")
-  .option("--settle-expired", "期限切れ質問を自動決済する")
-  .option("--claim-tempo", "Tempo リワードを自動請求する")
+  .description("Auto earn: answer questions → register Tempo → claim rewards")
+  .option("--answer-generator <command:string>", "Answer generator command (stdin: question JSON, stdout: answer CID)", { required: true })
+  .option("--max-questions <n:number>", "Max questions to process")
+  .option("--settle-expired", "Also settle expired questions")
+  .option("--claim-tempo", "Also claim Tempo rewards")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -49,7 +49,7 @@ export const autoCommand = new Command()
           proc.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
           proc.on("close", (code: number | null) => {
             if (code !== 0) {
-              process.stderr.write(`回答生成コマンドがエラーコード ${code} で終了: ${stderr}\n`);
+              process.stderr.write(`Answer generator command exited with code ${code}: ${stderr}\n`);
               resolve(null);
             } else {
               resolve(stdout.trim() || null);

@@ -3,13 +3,13 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const agentCommand = new Command()
-  .description("エージェントライフサイクル管理")
+  .description("Agent lifecycle management")
   .action(function () { this.showHelp(); })
   .command("register")
-  .description("エージェントを登録する")
+  .description("Register an agent")
   .arguments("<name:string>")
-  .option("--tags <tags:string>", "エージェントのタグ (カンマ区切り)")
-  .option("--invite-code <code:string>", "招待コード (500エージェント超で必須)")
+  .option("--tags <tags:string>", "Agent tags (comma-separated)")
+  .option("--invite-code <code:string>", "Invite code (required when >500 agents)")
   .action(async (options: any, name: string) => {
     try {
       const sdk = await createSDK(options);
@@ -22,8 +22,8 @@ export const agentCommand = new Command()
   })
   .reset()
   .command("status")
-  .description("エージェント情報を取得する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get agent status")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -36,7 +36,7 @@ export const agentCommand = new Command()
   })
   .reset()
   .command("upgrade-tier")
-  .description("Tier をアップグレードする")
+  .description("Upgrade agent tier")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -49,8 +49,8 @@ export const agentCommand = new Command()
   })
   .reset()
   .command("invite-code")
-  .description("招待コードを生成する")
-  .option("--salt <salt:string>", "ランダムソルト")
+  .description("Generate invite code (Tier 2+)")
+  .option("--salt <salt:string>", "Random salt")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -63,8 +63,8 @@ export const agentCommand = new Command()
   })
   .reset()
   .command("invite-quota")
-  .description("招待コードの残り発行枠を確認する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get remaining invite quota")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -77,7 +77,7 @@ export const agentCommand = new Command()
   })
   .reset()
   .command("is-open-registration")
-  .description("オープン登録期間かどうか確認する")
+  .description("Check if open registration is active")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

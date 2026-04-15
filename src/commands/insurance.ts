@@ -3,10 +3,10 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const insuranceCommand = new Command()
-  .description("レピュテーション保険操作")
+  .description("Reputation insurance operations")
   .action(function () { this.showHelp(); })
   .command("activate")
-  .description("保険を有効化する (Tier 1 以上)")
+  .description("Activate insurance (Tier 1+)")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -19,7 +19,7 @@ export const insuranceCommand = new Command()
   })
   .reset()
   .command("deactivate")
-  .description("保険を早期解除する (返金なし)")
+  .description("Deactivate insurance")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -32,7 +32,7 @@ export const insuranceCommand = new Command()
   })
   .reset()
   .command("renew")
-  .description("保険を4週間更新する (最大26週間)")
+  .description("Renew insurance")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -45,8 +45,8 @@ export const insuranceCommand = new Command()
   })
   .reset()
   .command("cost")
-  .description("週次コスト CKT を確認する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get insurance cost")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -59,8 +59,8 @@ export const insuranceCommand = new Command()
   })
   .reset()
   .command("status")
-  .description("保険の有効状態を確認する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get insurance status")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

@@ -3,15 +3,15 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const knowledgeCommand = new Command()
-  .description("ナレッジストア操作")
+  .description("Knowledge store operations")
   .action(function () { this.showHelp(); })
   .command("list")
-  .description("ナレッジを出品する")
+  .description("List knowledge for sale")
   .arguments("<title:string>")
-  .option("--tags <tags:string>", "タグ (カンマ区切り)", { required: true })
-  .option("--price <amount:string>", "価格 CKT", { required: true })
-  .option("--ipfs-cid <cid:string>", "コンテンツ CID", { required: true })
-  .option("--content-hash <hash:string>", "コンテンツハッシュ", { required: true })
+  .option("--tags <tags:string>", "Tags (comma-separated)", { required: true })
+  .option("--price <amount:string>", "Price (CKT)", { required: true })
+  .option("--ipfs-cid <cid:string>", "Content CID", { required: true })
+  .option("--content-hash <hash:string>", "Content hash", { required: true })
   .action(async (options: any, title: string) => {
     try {
       const sdk = await createSDK(options);
@@ -24,7 +24,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("purchase")
-  .description("ナレッジを購入する")
+  .description("Purchase knowledge")
   .arguments("<knowledge-id:number>")
   .action(async (options: any, knowledgeId: number) => {
     try {
@@ -38,7 +38,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("deliver")
-  .description("購入者にナレッジを配信する")
+  .description("Deliver knowledge to buyer")
   .arguments("<purchase-id:number>")
   .action(async (options: any, purchaseId: number) => {
     try {
@@ -52,7 +52,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("claim-undelivered")
-  .description("未配信ナレッジの返金請求")
+  .description("Claim refund for undelivered knowledge")
   .arguments("<purchase-id:number>")
   .action(async (options: any, purchaseId: number) => {
     try {
@@ -66,7 +66,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("get")
-  .description("ナレッジ情報を取得する")
+  .description("Get knowledge info")
   .arguments("<knowledge-id:number>")
   .action(async (options: any, knowledgeId: number) => {
     try {
@@ -80,7 +80,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("get-purchase")
-  .description("購入情報を取得する")
+  .description("Get purchase info")
   .arguments("<purchase-id:number>")
   .action(async (options: any, purchaseId: number) => {
     try {
@@ -94,10 +94,10 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("search")
-  .description("ナレッジを検索する")
-  .option("--tags <tags:string>", "タグフィルター")
-  .option("--from-block <block:number>", "開始ブロック")
-  .option("--max-results <n:number>", "最大件数")
+  .description("Search knowledge")
+  .option("--tags <tags:string>", "Tag filter")
+  .option("--from-block <block:number>", "Start block")
+  .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -110,10 +110,10 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("review")
-  .description("購入のレビューを投稿する")
+  .description("Submit a purchase review")
   .arguments("<purchase-id:number>")
-  .option("--product-score <score:number>", "プロダクトスコア (1-5)", { required: true })
-  .option("--seller-score <score:number>", "セラースコア (1-5)", { required: true })
+  .option("--product-score <score:number>", "Product score (1-5)", { required: true })
+  .option("--seller-score <score:number>", "Seller score (1-5)", { required: true })
   .action(async (options: any, purchaseId: number) => {
     try {
       const sdk = await createSDK(options);
@@ -126,7 +126,7 @@ export const knowledgeCommand = new Command()
   })
   .reset()
   .command("auto-review")
-  .description("30日経過後の自動レビュー")
+  .description("Auto-review after 30 days")
   .arguments("<purchase-id:number>")
   .action(async (options: any, purchaseId: number) => {
     try {

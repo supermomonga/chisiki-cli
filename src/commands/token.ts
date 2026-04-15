@@ -3,11 +3,11 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const tokenCommand = new Command()
-  .description("CKT トークン操作")
+  .description("CKT token operations")
   .action(function () { this.showHelp(); })
   .command("balance")
-  .description("CKT 残高を取得する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get CKT balance")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -20,7 +20,7 @@ export const tokenCommand = new Command()
   })
   .reset()
   .command("approve")
-  .description("CKT の手動承認")
+  .description("Approve CKT spending")
   .arguments("<spender:string> <amount:string>")
   .action(async (options: any, spender: string, amount: string) => {
     try {
@@ -34,9 +34,9 @@ export const tokenCommand = new Command()
   })
   .reset()
   .command("transactions")
-  .description("CKT 転送履歴を取得する")
-  .option("--from-block <block:number>", "開始ブロック")
-  .option("--max-results <n:number>", "最大件数")
+  .description("Get transaction history")
+  .option("--from-block <block:number>", "Start block")
+  .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

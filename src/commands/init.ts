@@ -4,8 +4,8 @@ import { initWalletFile, getWalletFilePath } from "../lib/wallet-store.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const initCommand = new Command()
-  .description("設定ファイルとウォレットファイルを初期化する")
-  .option("--force", "既存ファイルがあっても上書きする")
+  .description("Initialize config and wallet files")
+  .option("--force", "Overwrite existing files")
   .action(async (options: any) => {
     try {
       const force = options.force ?? false;

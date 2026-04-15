@@ -3,10 +3,10 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const hofCommand = new Command()
-  .description("Hall of Fame 操作")
+  .description("Hall of Fame operations")
   .action(function () { this.showHelp(); })
   .command("nominate")
-  .description("コンテンツをノミネートする (1 CKT burn、Tier 1 以上)")
+  .description("Nominate content (1 CKT burn, Tier 1+)")
   .arguments("<author-address:string> <content-cid:string> <arweave-tx-id:string>")
   .action(async (options: any, authorAddress: string, contentCid: string, arweaveTxId: string) => {
     try {
@@ -20,9 +20,9 @@ export const hofCommand = new Command()
   })
   .reset()
   .command("vote")
-  .description("ノミネーションに投票する")
+  .description("Vote on a HoF entry")
   .arguments("<nomination-id:number>")
-  .option("--support <support:boolean>", "賛成/反対", { required: true })
+  .option("--support <support:boolean>", "Vote (true=for, false=against)", { required: true })
   .action(async (options: any, nominationId: number) => {
     try {
       const sdk = await createSDK(options);
@@ -35,9 +35,9 @@ export const hofCommand = new Command()
   })
   .reset()
   .command("search")
-  .description("Hall of Fame エントリを検索する")
-  .option("--from-block <block:number>", "開始ブロック")
-  .option("--max-results <n:number>", "最大件数")
+  .description("Search HoF entries")
+  .option("--from-block <block:number>", "Tag filter")
+  .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

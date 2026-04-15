@@ -3,10 +3,10 @@ import { loadConfig, saveConfig, getConfigPath } from "../lib/config.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const configCommand = new Command()
-  .description("設定管理")
+  .description("Configuration management")
   .action(function () { this.showHelp(); })
   .command("show")
-  .description("現在の設定を表示する")
+  .description("Show current configuration")
   .action(async (options: any) => {
     try {
       const config = await loadConfig();
@@ -18,7 +18,7 @@ export const configCommand = new Command()
   })
   .reset()
   .command("set")
-  .description("設定値を変更する")
+  .description("Update a config value")
   .arguments("<key:string> <value:string>")
   .action(async (options: any, key: string, value: string) => {
     try {
@@ -32,7 +32,7 @@ export const configCommand = new Command()
           (config.default as any)[field] = value;
         }
       } else {
-        throw new Error(`不明な設定キー: ${key}\n使用可能: default.wallet, default.rpc_url, default.chain_id`);
+        throw new Error(`Unknown config key: ${key}\nAvailable: default.wallet, default.rpc_url, default.chain_id`);
       }
       await saveConfig(config);
       outputResult({ key, value }, options);
@@ -43,7 +43,7 @@ export const configCommand = new Command()
   })
   .reset()
   .command("path")
-  .description("設定ファイルのパスを表示する")
+  .description("Show config file path")
   .action(async (options: any) => {
     try {
       outputResult({ path: getConfigPath() }, options);

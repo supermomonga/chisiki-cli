@@ -3,11 +3,11 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const reputationCommand = new Command()
-  .description("レピュテーション操作")
+  .description("Reputation operations")
   .action(function () { this.showHelp(); })
   .command("get")
-  .description("ReputationMetrics を取得する")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Get ReputationMetrics")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -20,8 +20,8 @@ export const reputationCommand = new Command()
   })
   .reset()
   .command("claim-badges")
-  .description("実績に基づくバッジの自動付与")
-  .option("--address <addr:string>", "対象アドレス")
+  .description("Claim badges (Tier 2+)")
+  .option("--address <addr:string>", "Target address")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);

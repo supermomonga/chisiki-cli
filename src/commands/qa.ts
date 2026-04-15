@@ -3,14 +3,14 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const qaCommand = new Command()
-  .description("Q&A 操作")
+  .description("Q&A operations")
   .action(function () { this.showHelp(); })
   .command("post-question")
-  .description("質問を投稿する")
+  .description("Post a question")
   .arguments("<ipfs-cid:string>")
-  .option("--tags <tags:string>", "質問のタグ (カンマ区切り)", { required: true })
-  .option("--reward <amount:string>", "報酬 CKT 額", { required: true })
-  .option("--deadline <hours:number>", "回答期限 (時間)", { required: true })
+  .option("--tags <tags:string>", "Question tags (comma-separated)", { required: true })
+  .option("--reward <amount:string>", "Reward amount (CKT)", { required: true })
+  .option("--deadline <hours:number>", "Answer deadline (hours)", { required: true })
   .action(async (options: any, ipfsCid: string) => {
     try {
       const sdk = await createSDK(options);
@@ -23,11 +23,11 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("post-premium-question")
-  .description("プレミアム質問を投稿する")
+  .description("Post a premium question")
   .arguments("<ipfs-cid:string>")
-  .option("--tags <tags:string>", "質問のタグ (カンマ区切り)", { required: true })
-  .option("--reward <amount:string>", "報酬 CKT 額", { required: true })
-  .option("--deadline <hours:number>", "回答期限 (時間)", { required: true })
+  .option("--tags <tags:string>", "Question tags (comma-separated)", { required: true })
+  .option("--reward <amount:string>", "Reward amount (CKT)", { required: true })
+  .option("--deadline <hours:number>", "Answer deadline (hours)", { required: true })
   .action(async (options: any, ipfsCid: string) => {
     try {
       const sdk = await createSDK(options);
@@ -45,7 +45,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("post-answer")
-  .description("質問に回答する")
+  .description("Post an answer")
   .arguments("<question-id:number> <ipfs-cid:string>")
   .action(async (options: any, questionId: number, ipfsCid: string) => {
     try {
@@ -59,7 +59,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("upvote")
-  .description("回答にアップボートする")
+  .description("Upvote an answer")
   .arguments("<question-id:number> <answer-index:number>")
   .action(async (options: any, questionId: number, answerIndex: number) => {
     try {
@@ -73,11 +73,11 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("commit-best")
-  .description("ベストアンサーのコミット (commit-reveal ステップ1)")
+  .description("Commit best answer (commit-reveal step 1)")
   .arguments("<question-id:number> <best-index:number>")
-  .option("--runner1 <index:number>", "次点1のインデックス")
-  .option("--runner2 <index:number>", "次点2のインデックス")
-  .option("--salt <salt:string>", "ソルト")
+  .option("--runner1 <index:number>", "Runner-up 1 index")
+  .option("--runner2 <index:number>", "Runner-up 2 index")
+  .option("--salt <salt:string>", "Salt")
   .action(async (options: any, questionId: number, bestIndex: number) => {
     try {
       const sdk = await createSDK(options);
@@ -90,7 +90,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("reveal-best")
-  .description("ベストアンサーの公開 (commit-reveal ステップ2)")
+  .description("Reveal best answer (commit-reveal step 2)")
   .arguments("<question-id:number> <best-index:number> <runner1:string> <runner2:string> <salt:string>")
   .action(async (options: any, questionId: number, bestIndex: number, runner1: string, runner2: string, salt: string) => {
     try {
@@ -104,7 +104,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("withdraw")
-  .description("回答なし質問の報酬引き戻し")
+  .description("Withdraw reward from unanswered question")
   .arguments("<question-id:number>")
   .action(async (options: any, questionId: number) => {
     try {
@@ -118,7 +118,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("auto-settle")
-  .description("期限切れ質問の自動決済 (1 CKT キーパー報酬)")
+  .description("Auto-settle expired question (1 CKT keeper reward)")
   .arguments("<question-id:number>")
   .action(async (options: any, questionId: number) => {
     try {
@@ -132,11 +132,11 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("search")
-  .description("質問を検索する (eth_getLogs ベース)")
-  .option("--tags <tags:string>", "タグフィルター")
-  .option("--unsettled", "未決済のみ")
-  .option("--from-block <block:number>", "開始ブロック")
-  .option("--max-results <n:number>", "最大件数")
+  .description("Search questions (eth_getLogs based)")
+  .option("--tags <tags:string>", "Tag filter")
+  .option("--unsettled", "Unsettled only")
+  .option("--from-block <block:number>", "Start block")
+  .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -149,10 +149,10 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("search-direct")
-  .description("質問を検索する (オンチェーンカウンター直接参照、無料 RPC 対応)")
-  .option("--tags <tags:string>", "タグフィルター")
-  .option("--unsettled", "未決済のみ")
-  .option("--max-results <n:number>", "最大件数")
+  .description("Search questions (on-chain counter, free RPC compatible)")
+  .option("--tags <tags:string>", "Tag filter")
+  .option("--unsettled", "Unsettled only")
+  .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
@@ -165,7 +165,7 @@ export const qaCommand = new Command()
   })
   .reset()
   .command("batch-settle")
-  .description("期限切れ質問の一括決済 (各 1 CKT キーパー報酬)")
+  .description("Batch settle expired questions (1 CKT keeper reward each)")
   .arguments("<question-ids:string>")
   .action(async (options: any, questionIds: string) => {
     try {

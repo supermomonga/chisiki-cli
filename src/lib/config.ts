@@ -55,7 +55,7 @@ export async function saveConfig(config: AppConfig): Promise<void> {
 
 export async function initConfig(force: boolean): Promise<void> {
   if (existsSync(CONFIG_FILE) && !force) {
-    throw new Error(`設定ファイルが既に存在します: ${CONFIG_FILE}\n上書きするには --force を指定してください`);
+    throw new Error(`Config file already exists: ${CONFIG_FILE}\nUse --force to overwrite`);
   }
   await saveConfig(DEFAULT_CONFIG);
 }

@@ -3,10 +3,10 @@ import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
 export const reportCommand = new Command()
-  .description("レポート・モデレーション操作")
+  .description("Report and moderation operations")
   .action(function () { this.showHelp(); })
   .command("submit")
-  .description("コンテンツを報告する (1 CKT、Tier 1 以上)")
+  .description("Report content (1 CKT, Tier 1+)")
   .arguments("<content-type:string> <content-id:number> <reason:string>")
   .action(async (options: any, contentType: string, contentId: number, reason: string) => {
     try {
@@ -20,7 +20,7 @@ export const reportCommand = new Command()
   })
   .reset()
   .command("dispute")
-  .description("虚偽報告に反論する (Tier 1 以上、無料)")
+  .description("Dispute a report (1 CKT)")
   .arguments("<report-id:number>")
   .action(async (options: any, reportId: number) => {
     try {
@@ -34,7 +34,7 @@ export const reportCommand = new Command()
   })
   .reset()
   .command("auto-validate")
-  .description("30日経過後の報告の自動検証")
+  .description("Trigger auto-validation")
   .arguments("<report-id:number>")
   .action(async (options: any, reportId: number) => {
     try {

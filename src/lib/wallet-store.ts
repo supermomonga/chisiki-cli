@@ -47,11 +47,11 @@ function parseWalletFile(buf: Buffer): WalletFileData {
   let offset = 0;
   const magic = buf.subarray(offset, offset + 4);
   offset += 4;
-  if (!magic.equals(MAGIC)) throw new Error("無効なウォレットファイルです");
+  if (!magic.equals(MAGIC)) throw new Error("Invalid wallet file");
 
   const version = buf.readUInt8(offset);
   offset += 1;
-  if (version !== VERSION) throw new Error(`未対応のウォレットファイルバージョン: ${version}`);
+  if (version !== VERSION) throw new Error(`Unsupported wallet file version: ${version}`);
 
   const salt = buf.subarray(offset, offset + 32);
   offset += 32;
@@ -100,7 +100,7 @@ function encryptPrivateKey(privateKey: string, derivedKey: Buffer): { iv: Uint8A
   const iv = randomBytes(IV_LEN);
   const keyBytes = Buffer.from(privateKey.replace(/^0x/, ""), "hex");
   if (keyBytes.length !== PRIVATE_KEY_LEN) {
-    throw new Error("秘密鍵は32バイト (64文字の16進数) である必要があります");
+    throw new Error("Private key must be 32 bytes (64 hex characters)");
   }
   const cipher = createCipheriv("aes-256-gcm", derivedKey, iv);
   const encrypted = Buffer.concat([cipher.update(keyBytes), cipher.final()]);
@@ -136,7 +136,7 @@ async function saveWalletFile(data: WalletFileData): Promise<void> {
 export async function initWalletFile(force: boolean): Promise<void> {
   const path = getWalletPath();
   if (existsSync(path) && !force) {
-    throw new Error(`ウォレットファイルが既に存在します: ${path}\n上書きするには --force を指定してください`);
+    throw new Error(`Wallet file already exists: ${path}\nUse --force to overwrite`);
   }
   const salt = randomBytes(32);
   await saveWalletFile({ salt, entries: [] });
@@ -150,7 +150,7 @@ export async function addWallet(name: string, privateKey: string): Promise<strin
     data = { salt, entries: [] };
   }
   if (data.entries.some((e) => e.name === name)) {
-    throw new Error(`ウォレット '${name}' は既に登録されています`);
+    throw new Error(`Wallet '${name}' already exists`);
   }
   const derivedKey = deriveKey(password, data.salt);
   const { iv, encryptedKey } = encryptPrivateKey(privateKey, derivedKey);
@@ -169,9 +169,9 @@ export async function addWallet(name: string, privateKey: string): Promise<strin
 
 export async function removeWallet(name: string): Promise<void> {
   const data = await loadWalletFile();
-  if (!data) throw new Error("ウォレットファイルが見つかりません");
+  if (!data) throw new Error("Wallet file not found");
   const idx = data.entries.findIndex((e) => e.name === name);
-  if (idx === -1) throw new Error(`ウォレット '${name}' が見つかりません`);
+  if (idx === -1) throw new Error(`Wallet '${name}' not found`);
   data.entries.splice(idx, 1);
   await saveWalletFile(data);
 
@@ -190,9 +190,9 @@ export async function listWallets(): Promise<{ name: string; address: string }[]
 
 export async function exportPrivateKey(name: string): Promise<string> {
   const data = await loadWalletFile();
-  if (!data) throw new Error("ウォレットファイルが見つかりません");
+  if (!data) throw new Error("Wallet file not found");
   const entry = data.entries.find((e) => e.name === name);
-  if (!entry) throw new Error(`ウォレット '${name}' が見つかりません`);
+  if (!entry) throw new Error(`Wallet '${name}' not found`);
   const password = await getMasterPassword();
   const derivedKey = deriveKey(password, data.salt);
   return decryptPrivateKey(entry.encryptedKey, entry.iv, derivedKey);
