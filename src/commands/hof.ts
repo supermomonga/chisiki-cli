@@ -36,7 +36,7 @@ export const hofCommand = new Command()
   .reset()
   .command("search")
   .description("Search HoF entries")
-  .option("--from-block <block:number>", "Tag filter")
+  .option("--from-block <block:number>", "Start block")
   .option("--max-results <n:number>", "Max results")
   .action(async (options: any) => {
     try {

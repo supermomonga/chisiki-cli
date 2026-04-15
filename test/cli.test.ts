@@ -104,6 +104,14 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
+  test("hof search --help shows correct from-block description", async () => {
+    const { stdout, exitCode } = await run("hof", "search", "--help");
+    expect(stdout).toContain("--from-block");
+    expect(stdout).toContain("Start block");
+    expect(stdout).not.toContain("Tag filter");
+    expect(exitCode).toBe(0);
+  });
+
   test("insurance --help shows subcommands", async () => {
     const { stdout, exitCode } = await run("insurance", "--help");
     expect(stdout).toContain("activate");
