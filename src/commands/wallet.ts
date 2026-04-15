@@ -7,9 +7,10 @@ import { createInterface } from "node:readline";
 
 async function readSecretInput(prompt: string): Promise<string> {
   const rl = createInterface({ input: process.stdin, output: process.stderr });
+  // Disable echo for secret input
+  if (process.stdin.isTTY) process.stdin.setRawMode?.(false);
   return new Promise((resolve) => {
-    process.stderr.write(prompt);
-    rl.question("", (answer) => {
+    rl.question(prompt, (answer) => {
       rl.close();
       resolve(answer);
     });
