@@ -25,3 +25,4 @@ jobs:
         run: bun test test/e2e/
         env:
           ANVIL_BIN: anvil
+          CHISIKI_RPC_URL: ${{ secrets.CHISIKI_RPC_URL }}
