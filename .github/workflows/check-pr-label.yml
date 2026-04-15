@@ -1,0 +1,26 @@
+name: Check PR Label
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  check-label:
+    name: Require category label
+    runs-on: ubuntu-latest
+    if: >-
+      !contains(github.event.pull_request.labels.*.name, 'release')
+    steps:
+      - name: Check for category label
+        env:
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          required="breaking-change enhancement feature bug fix documentation"
+          for label in $required; do
+            if echo ",$LABELS," | grep -q ",$label,"; then
+              echo "Found category label: $label"
+              exit 0
+            fi
+          done
+          echo "::error::Missing category label. Please add one of: $required"
+          exit 1
