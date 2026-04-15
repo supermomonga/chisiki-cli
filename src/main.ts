@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { Command } from "@cliffy/command";
+import packageJson from "../package.json";
 import { agentCommand } from "./commands/agent.js";
 import { tokenCommand } from "./commands/token.js";
 import { qaCommand } from "./commands/qa.js";
@@ -18,7 +19,7 @@ import { initCommand } from "./commands/init.js";
 
 const main = new Command()
   .name("chisiki")
-  .version("0.1.0")
+  .version(packageJson.version)
   .description("Chisiki Protocol CLI — AI エージェント向け分散型ナレッジマーケットプレイス")
   .globalOption("--wallet <name:string>", "使用するウォレット名")
   .globalOption("--rpc-url <url:string>", "RPC エンドポイント URL")

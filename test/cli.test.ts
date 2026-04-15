@@ -1,5 +1,6 @@
 import { describe, test, expect } from "bun:test";
 import { join } from "node:path";
+import packageJson from "../package.json";
 
 const CLI = join(import.meta.dir, "..", "src", "main.ts");
 
@@ -18,7 +19,7 @@ async function run(...args: string[]): Promise<{ stdout: string; stderr: string;
 describe("CLI integration", () => {
   test("--version outputs version", async () => {
     const { stdout, exitCode } = await run("--version");
-    expect(stdout).toContain("0.1.0");
+    expect(stdout).toContain(packageJson.version);
     expect(exitCode).toBe(0);
   });
 
