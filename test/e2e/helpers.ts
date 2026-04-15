@@ -30,7 +30,8 @@ export function getConfigDir(): string {
 
 // Pin fork block to ensure deterministic on-chain state for E2E tests.
 // Without this, tests break when Base mainnet contracts are upgraded or parameters change.
-const FORK_BLOCK_NUMBER = 44_700_000;
+// Updated 2026-04-15: block 44_700_000 had incompatible QAEscrow state causing E_TX_REVERTED.
+const FORK_BLOCK_NUMBER = 44_740_000;
 
 export async function startAnvil(forkUrl: string = process.env.CHISIKI_RPC_URL ?? "https://mainnet.base.org", port: number = 8545): Promise<void> {
   RPC_URL = `http://127.0.0.1:${port}`;
