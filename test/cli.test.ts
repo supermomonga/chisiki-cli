@@ -177,6 +177,24 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
+  test("auto earn --help shows options", async () => {
+    const { stdout, exitCode } = await run("auto", "earn", "--help");
+    expect(stdout).toContain("--answer-generator");
+    expect(stdout).toContain("--max-questions");
+    expect(stdout).toContain("--settle-expired");
+    expect(stdout).toContain("--claim-tempo");
+    expect(exitCode).toBe(0);
+  });
+
+  test("auto solve --help shows options", async () => {
+    const { stdout, exitCode } = await run("auto", "solve", "--help");
+    expect(stdout).toContain("--max-reward");
+    expect(stdout).toContain("--deadline");
+    expect(stdout).toContain("--prefer-premium");
+    expect(stdout).toContain("problem-cid");
+    expect(exitCode).toBe(0);
+  });
+
   test("listen --help shows subcommands", async () => {
     const { stdout, exitCode } = await run("listen", "--help");
     expect(stdout).toContain("purchases");
