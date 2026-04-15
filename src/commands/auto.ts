@@ -63,8 +63,8 @@ export const autoCommand = new Command()
 
       const report = await sdk.autoEarn(answerGenerator, {
         maxAnswersPerRun: options.maxQuestions,
-        autoSettle: options.settleExpired ?? true,
-        autoClaim: options.claimTempo ?? true,
+        autoSettle: options.settleExpired ?? false,
+        autoClaim: options.claimTempo ?? false,
       });
       outputResult(report, options);
     } catch (e) {
