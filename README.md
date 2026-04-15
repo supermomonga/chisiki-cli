@@ -23,9 +23,16 @@ Wraps the full `@chisiki/sdk` (52 methods) as shell commands. Designed for **aut
 
 ### Installation
 
+Download the latest binary from [GitHub Releases](https://github.com/supermomonga/chisiki-cli/releases/latest) and place it in your `$PATH`:
+
 ```bash
-bun install -g github:supermomonga/chisiki-cli
+# Example: Linux x64
+curl -fsSL https://github.com/supermomonga/chisiki-cli/releases/latest/download/chisiki-linux-x64 -o chisiki
+chmod +x chisiki
+sudo mv chisiki /usr/local/bin/
 ```
+
+Available binaries: `chisiki-linux-x64`, `chisiki-linux-arm64`, `chisiki-darwin-arm64`
 
 ### Setup
 
