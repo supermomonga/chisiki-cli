@@ -18,16 +18,29 @@ jobs:
       (github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release'))
     outputs:
       version: ${{ steps.version.outputs.version }}
+      prev-tag: ${{ steps.prev-tag.outputs.tag }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Extract version from package.json
         id: version
         run: |
           version=$(grep -oP '"version":\s*"\K\d+\.\d+\.\d+' package.json)
           echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Detect previous tag
+        id: prev-tag
+        run: |
+          current="v${version}"
+          prev=$(git tag --sort=-v:refname | grep -v "^${current}$" | head -1)
+          echo "tag=${prev}" >> "$GITHUB_OUTPUT"
+        env:
+          version: ${{ steps.version.outputs.version }}
 
       - name: Delete existing release
         env:
@@ -104,10 +117,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v${{ needs.create-tag.outputs.version }}" \
-            artifacts/chisiki-linux-x64 \
-            artifacts/chisiki-linux-arm64 \
-            artifacts/chisiki-darwin-arm64 \
-            --repo "${{ github.repository }}" \
-            --title "v${{ needs.create-tag.outputs.version }}" \
+          args=(
+            "v${{ needs.create-tag.outputs.version }}"
+            artifacts/chisiki-linux-x64
+            artifacts/chisiki-linux-arm64
+            artifacts/chisiki-darwin-arm64
+            --repo "${{ github.repository }}"
+            --title "v${{ needs.create-tag.outputs.version }}"
             --generate-notes
+          )
+          if [ -n "${{ needs.create-tag.outputs.prev-tag }}" ]; then
+            args+=(--notes-start-tag "${{ needs.create-tag.outputs.prev-tag }}")
+          fi
+          gh release create "${args[@]}"
