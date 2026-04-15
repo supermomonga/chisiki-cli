@@ -67,7 +67,7 @@ describe("output", () => {
 
     test("outputs empty message for empty array with --human", () => {
       outputResult([], { human: true });
-      expect(stdoutData).toContain("結果なし");
+      expect(stdoutData).toContain("(no results)");
     });
   });
 
