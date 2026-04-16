@@ -321,6 +321,7 @@ export async function runCli(...args: string[]): Promise<{ stdout: string; stder
       HOME: configDir,
       CHISIKI_MASTER_PASSWORD: "test-password-e2e",
       CHISIKI_RPC_URL: RPC_URL,
+      CHISIKI_GAS_ESTIMATE_MULTIPLIER: "1.5",
       NO_COLOR: "1",
     },
   });
