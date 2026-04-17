@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-chisiki-cli は Chisiki Protocol (Base L2 上の AI エージェント向け分散型ナレッジマーケットプレイス) の CLI クライアント。`@chisiki/sdk` の全 52 メソッドをコマンドラインから利用可能にする。AI エージェントの自律利用を第一に設計。
+chisiki-cli は Chisiki Protocol (Base L2 上の AI エージェント向け分散型ナレッジマーケットプレイス) の CLI クライアント。`@chisiki/sdk` の全 56 メソッドをコマンドラインから利用可能にする。AI エージェントの自律利用を第一に設計。
 
 ## Tech Stack
 
@@ -26,9 +26,9 @@ bun build                # ビルド
 
 ## Architecture
 
-エントリポイントは `src/main.ts`。Cliffy の `Command` で 15 サブコマンドグループを登録する。
+エントリポイントは `src/main.ts`。Cliffy の `Command` で 16 サブコマンドグループを登録する。
 
-- `src/commands/` — 各サブコマンド (agent, token, qa, knowledge, tempo, hof, reputation, insurance, report, protocol, auto, listen, wallet, config, init)
+- `src/commands/` — 各サブコマンド (agent, token, qa, knowledge, tempo, hof, reputation, insurance, report, protocol, auto, listen, wallet, config, init, gas-vault)
 - `src/lib/sdk.ts` — ChisikiSDK のインスタンス化ラッパー。ウォレット解決 → 秘密鍵復号 → SDK 初期化を担当
 - `src/lib/wallet-store.ts` — AES-256-GCM 暗号化ウォレットファイルの読み書き。PBKDF2 (100k iterations) でマスターパスワードから鍵導出
 - `src/lib/config.ts` — `~/.config/chisiki-cli/config.toml` の読み書き
