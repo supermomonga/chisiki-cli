@@ -2,6 +2,19 @@ import { Command } from "@cliffy/command";
 import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
+// CIDv0: base58btc, always "Qm" + 44 chars from the base58 alphabet
+const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
+// CIDv1 (base32 lowercase, the common multibase for IPFS): "b" + base32 chars.
+// Minimum length covers sha-256 dag-pb (~59 chars); accept longer for larger multihashes.
+const CID_V1 = /^b[a-z2-7]{50,}$/;
+
+function assertIpfsCid(input: string): void {
+  const cid = input.startsWith("ipfs://") ? input.slice("ipfs://".length) : input;
+  if (!CID_V0.test(cid) && !CID_V1.test(cid)) {
+    throw new Error(`Invalid IPFS CID: expected CIDv0 (Qm...) or CIDv1 (b...), got "${input}"`);
+  }
+}
+
 export const qaCommand = new Command()
   .description("Q&A operations")
   .action(function () { this.showHelp(); })
@@ -13,6 +26,7 @@ export const qaCommand = new Command()
   .option("--deadline <hours:number>", "Answer deadline (hours)", { required: true })
   .action(async (options: any, ipfsCid: string) => {
     try {
+      assertIpfsCid(ipfsCid);
       const sdk = await createSDK(options);
       const result = await sdk.postQuestion(ipfsCid, options.tags, options.reward, options.deadline);
       outputResult({ txHash: result.hash, questionId: result.questionId, blockNumber: result.blockNumber }, options);
