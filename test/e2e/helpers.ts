@@ -31,7 +31,8 @@ export function getConfigDir(): string {
 // Pin fork block to ensure deterministic on-chain state for E2E tests.
 // Without this, tests break when Base mainnet contracts are upgraded or parameters change.
 // Updated 2026-04-15: block 44_700_000 had incompatible QAEscrow state causing E_TX_REVERTED.
-const FORK_BLOCK_NUMBER = 44_740_000;
+// Updated 2026-04-17: bumped to 44_800_000 so GasVault / GasVaultRouter contracts are available.
+const FORK_BLOCK_NUMBER = 44_800_000;
 
 export async function startAnvil(forkUrl: string = process.env.CHISIKI_RPC_URL ?? "https://mainnet.base.org", port: number = 8545): Promise<void> {
   RPC_URL = `http://127.0.0.1:${port}`;
@@ -243,7 +244,7 @@ export async function preApproveCKT(privateKey: string): Promise<void> {
   const managed = new ethers.NonceManager(wallet);
   const ckt = new ethers.Contract(addresses.ckt, CKT_ABI, managed);
   const max = ethers.MaxUint256;
-  const spenders = [addresses.qaEscrow, addresses.knowledgeStore, addresses.agentRegistry, addresses.hallOfFame, addresses.tempoReward, addresses.report];
+  const spenders = [addresses.qaEscrow, addresses.knowledgeStore, addresses.agentRegistry, addresses.hallOfFame, addresses.tempoReward, addresses.report, ...(addresses.gasVault ? [addresses.gasVault] : [])];
   for (const spender of spenders) {
     await (await ckt.approve(spender, max)).wait();
   }

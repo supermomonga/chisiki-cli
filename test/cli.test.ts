@@ -36,7 +36,7 @@ describe("CLI integration", () => {
     const commands = [
       "agent", "token", "qa", "knowledge", "tempo", "hof",
       "reputation", "insurance", "report", "protocol",
-      "auto", "listen", "wallet", "config", "init",
+      "auto", "listen", "wallet", "config", "init", "gas-vault",
     ];
     for (const cmd of commands) {
       expect(stdout).toContain(cmd);
@@ -143,7 +143,7 @@ describe("CLI integration", () => {
   const commandGroups = [
     "agent", "token", "qa", "knowledge", "tempo", "hof",
     "reputation", "insurance", "report", "protocol",
-    "auto", "listen", "wallet", "config",
+    "auto", "listen", "wallet", "config", "gas-vault",
   ];
 
   for (const cmd of commandGroups) {
@@ -192,6 +192,14 @@ describe("CLI integration", () => {
     expect(stdout).toContain("submit");
     expect(stdout).toContain("dispute");
     expect(stdout).toContain("auto-validate");
+    expect(stdout).toContain("execute-validation");
+    expect(exitCode).toBe(0);
+  });
+
+  test("report execute-validation --help shows arguments", async () => {
+    const { stdout, exitCode } = await run("report", "execute-validation", "--help");
+    expect(stdout).toContain("content-type");
+    expect(stdout).toContain("content-id");
     expect(exitCode).toBe(0);
   });
 
@@ -276,6 +284,25 @@ describe("CLI integration", () => {
     expect(stdout).toContain("balance");
     expect(stdout).toContain("approve");
     expect(stdout).toContain("transactions");
+    expect(exitCode).toBe(0);
+  });
+
+  test("gas-vault --help shows subcommands", async () => {
+    const { stdout, exitCode } = await run("gas-vault", "--help");
+    expect(stdout).toContain("deposit");
+    expect(stdout).toContain("balance");
+    expect(exitCode).toBe(0);
+  });
+
+  test("gas-vault deposit --help shows arguments", async () => {
+    const { stdout, exitCode } = await run("gas-vault", "deposit", "--help");
+    expect(stdout).toContain("amount");
+    expect(exitCode).toBe(0);
+  });
+
+  test("gas-vault balance --help shows options", async () => {
+    const { stdout, exitCode } = await run("gas-vault", "balance", "--help");
+    expect(stdout).toContain("--address");
     expect(exitCode).toBe(0);
   });
 });

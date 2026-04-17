@@ -45,4 +45,18 @@ export const reportCommand = new Command()
       outputError(e, options);
       process.exit(1);
     }
+  })
+  .reset()
+  .command("execute-validation")
+  .description("Finalize delist after 48h timelock (5 reports + no dispute)")
+  .arguments("<content-type:string> <content-id:number>")
+  .action(async (options: any, contentType: string, contentId: number) => {
+    try {
+      const sdk = await createSDK(options);
+      const result = await sdk.executeValidation(contentType, contentId);
+      outputResult({ txHash: result.hash, blockNumber: result.blockNumber }, options);
+    } catch (e) {
+      outputError(e, options);
+      process.exit(1);
+    }
   });

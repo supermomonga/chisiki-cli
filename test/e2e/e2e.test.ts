@@ -493,6 +493,41 @@ describe("E2E (anvil fork)", () => {
       expect(exitCode).toBe(1);
       expect(stderr).toContain("E_TIER");
     }, E2E_TIMEOUT);
+
+    test("report execute-validation fails with E_TX_REVERTED for non-reported content", async () => {
+      const { exitCode, stderr } = await runCli("report", "execute-validation", "question", "1");
+      expect(exitCode).toBe(1);
+      expect(stderr.length).toBeGreaterThan(0);
+    }, E2E_TIMEOUT);
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  Gas Vault
+  // ═══════════════════════════════════════════════════════════
+
+  describe("gas-vault", () => {
+    test("gas-vault balance returns zero for new account", async () => {
+      const { json, exitCode } = await runCli("gas-vault", "balance");
+      expect(exitCode).toBe(0);
+      expect(json).toHaveProperty("balance");
+      expect(Number(json.balance)).toBe(0);
+    }, E2E_TIMEOUT);
+
+    test("gas-vault balance --address for specific address", async () => {
+      const { json, exitCode } = await runCli("gas-vault", "balance", "--address", TEST_ACCOUNTS[1].address);
+      expect(exitCode).toBe(0);
+      expect(json).toHaveProperty("balance");
+    }, E2E_TIMEOUT);
+
+    test("gas-vault deposit deposits CKT and increases balance", async () => {
+      const r = await runCli("gas-vault", "deposit", "5");
+      expect(r.exitCode).toBe(0);
+      expect(r.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
+      expect(r.json.blockNumber).toBeGreaterThan(0);
+
+      const { json } = await runCli("gas-vault", "balance");
+      expect(Number(json.balance)).toBe(5);
+    }, E2E_TIMEOUT);
   });
 
   // ═══════════════════════════════════════════════════════════

@@ -16,6 +16,7 @@ import { listenCommand } from "./commands/listen.js";
 import { walletCommand } from "./commands/wallet.js";
 import { configCommand } from "./commands/config.js";
 import { initCommand } from "./commands/init.js";
+import { gasVaultCommand } from "./commands/gas-vault.js";
 
 const main = new Command()
   .name("chisiki")
@@ -42,6 +43,7 @@ const main = new Command()
   .command("listen", listenCommand)
   .command("wallet", walletCommand)
   .command("config", configCommand)
-  .command("init", initCommand);
+  .command("init", initCommand)
+  .command("gas-vault", gasVaultCommand);
 
 await main.parse(Bun.argv.slice(2));
