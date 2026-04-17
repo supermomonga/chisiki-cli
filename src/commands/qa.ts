@@ -8,10 +8,35 @@ const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
 // Minimum length covers sha-256 dag-pb (~59 chars); accept longer for larger multihashes.
 const CID_V1 = /^b[a-z2-7]{50,}$/;
 
-function assertIpfsCid(input: string): void {
+const URL_HEAD_TIMEOUT_MS = 5_000;
+
+async function assertContentRef(input: string): Promise<void> {
+  // http(s) URL: verify reachability with HEAD
+  // TODO: detect whether the URL is an IPFS gateway (e.g. https://ipfs.io/ipfs/<cid>,
+  // https://<cid>.ipfs.dweb.link, https://w3s.link/ipfs/<cid>) and extract+validate the
+  // embedded CID so gateway URLs get the same format guarantees as bare CIDs.
+  if (input.startsWith("http://") || input.startsWith("https://")) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), URL_HEAD_TIMEOUT_MS);
+    let res: Response;
+    try {
+      res = await fetch(input, { method: "HEAD", redirect: "follow", signal: controller.signal });
+    } catch (e: any) {
+      const reason = e?.name === "AbortError" ? `timeout after ${URL_HEAD_TIMEOUT_MS}ms` : (e?.message ?? String(e));
+      throw new Error(`URL not reachable: ${input} (${reason})`);
+    } finally {
+      clearTimeout(timer);
+    }
+    if (!res.ok) {
+      throw new Error(`URL not reachable: HEAD ${input} returned ${res.status}`);
+    }
+    return;
+  }
+
+  // IPFS CID (with optional ipfs:// prefix): format check only
   const cid = input.startsWith("ipfs://") ? input.slice("ipfs://".length) : input;
   if (!CID_V0.test(cid) && !CID_V1.test(cid)) {
-    throw new Error(`Invalid IPFS CID: expected CIDv0 (Qm...) or CIDv1 (b...), got "${input}"`);
+    throw new Error(`Invalid content: expected IPFS CID (Qm.../b...) or http(s) URL, got "${input}"`);
   }
 }
 
@@ -20,15 +45,15 @@ export const qaCommand = new Command()
   .action(function () { this.showHelp(); })
   .command("post-question")
   .description("Post a question")
-  .arguments("<ipfs-cid:string>")
+  .arguments("<content:string>")
   .option("--tags <tags:string>", "Question tags (comma-separated)", { required: true })
   .option("--reward <amount:string>", "Reward amount (CKT)", { required: true })
   .option("--deadline <hours:number>", "Answer deadline (hours)", { required: true })
-  .action(async (options: any, ipfsCid: string) => {
+  .action(async (options: any, content: string) => {
     try {
-      assertIpfsCid(ipfsCid);
+      await assertContentRef(content);
       const sdk = await createSDK(options);
-      const result = await sdk.postQuestion(ipfsCid, options.tags, options.reward, options.deadline);
+      const result = await sdk.postQuestion(content, options.tags, options.reward, options.deadline);
       outputResult({ txHash: result.hash, questionId: result.questionId, blockNumber: result.blockNumber }, options);
     } catch (e) {
       outputError(e, options);

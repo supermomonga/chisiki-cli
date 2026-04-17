@@ -233,18 +233,35 @@ describe("E2E (anvil fork)", () => {
 
     test.each([
       ["arbitrary string", "not-a-cid"],
-      ["http URL", "http://example.com/foo"],
-      ["paste.rs URL", "https://paste.rs/abc"],
       ["CIDv0 too short", "Qm" + "a".repeat(10)],
       ["CIDv0 with invalid base58 char", "Qm" + "0".repeat(44)], // '0' is not in base58
       ["ipfs:// with invalid CID", "ipfs://not-a-cid"],
-    ])("qa post-question rejects invalid IPFS CID: %s", async (_label, badCid) => {
+    ])("qa post-question rejects malformed content ref: %s", async (_label, badRef) => {
       const { exitCode, stderr } = await runCli(
-        "qa", "post-question", badCid,
+        "qa", "post-question", badRef,
         "--tags", "testing", "--reward", "10", "--deadline", "24",
       );
       expect(exitCode).toBe(1);
-      expect(stderr).toContain("Invalid IPFS CID");
+      expect(stderr).toContain("Invalid content");
+    }, E2E_TIMEOUT);
+
+    test("qa post-question accepts reachable https URL", async () => {
+      const r = await runCli(
+        "qa", "post-question", "https://example.com/",
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(r.exitCode).toBe(0);
+      expect(r.json.questionId).toBeGreaterThanOrEqual(0);
+    }, E2E_TIMEOUT);
+
+    test("qa post-question rejects unreachable https URL (HEAD 404)", async () => {
+      const { exitCode, stderr } = await runCli(
+        "qa", "post-question",
+        "https://example.com/definitely-not-found-" + randomBytes(8).toString("hex"),
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain("not reachable");
     }, E2E_TIMEOUT);
 
     test("qa post-premium-question posts premium question", async () => {
