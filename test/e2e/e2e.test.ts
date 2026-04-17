@@ -9,8 +9,16 @@ import {
 
 const E2E_TIMEOUT = 30_000;
 
-function uniqueCID(prefix: string = "Qm"): string {
-  return prefix + randomBytes(16).toString("hex");
+// base58btc alphabet (Bitcoin/IPFS flavor)
+const BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+// Generate a syntactically-valid CIDv0 ("Qm" + 44 base58 chars).
+// Content isn't resolved in tests, so the bytes don't need to hash to anything real.
+function uniqueCID(): string {
+  const bytes = randomBytes(44);
+  let s = "Qm";
+  for (let i = 0; i < 44; i++) s += BASE58[bytes[i] % 58];
+  return s;
 }
 
 describe("E2E (anvil fork)", () => {
@@ -212,6 +220,48 @@ describe("E2E (anvil fork)", () => {
       expect(r.exitCode).toBe(0);
       expect(r.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
       expect(r.json.questionId).toBeGreaterThanOrEqual(0);
+    }, E2E_TIMEOUT);
+
+    test("qa post-question accepts ipfs:// prefix", async () => {
+      const r = await runCli(
+        "qa", "post-question", "ipfs://" + uniqueCID(),
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(r.exitCode).toBe(0);
+      expect(r.json.questionId).toBeGreaterThanOrEqual(0);
+    }, E2E_TIMEOUT);
+
+    test.each([
+      ["arbitrary string", "not-a-cid"],
+      ["CIDv0 too short", "Qm" + "a".repeat(10)],
+      ["CIDv0 with invalid base58 char", "Qm" + "0".repeat(44)], // '0' is not in base58
+      ["ipfs:// with invalid CID", "ipfs://not-a-cid"],
+    ])("qa post-question rejects malformed content ref: %s", async (_label, badRef) => {
+      const { exitCode, stderr } = await runCli(
+        "qa", "post-question", badRef,
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain("Invalid content");
+    }, E2E_TIMEOUT);
+
+    test("qa post-question accepts reachable https URL", async () => {
+      const r = await runCli(
+        "qa", "post-question", "https://example.com/",
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(r.exitCode).toBe(0);
+      expect(r.json.questionId).toBeGreaterThanOrEqual(0);
+    }, E2E_TIMEOUT);
+
+    test("qa post-question rejects unreachable https URL (HEAD 404)", async () => {
+      const { exitCode, stderr } = await runCli(
+        "qa", "post-question",
+        "https://example.com/definitely-not-found-" + randomBytes(8).toString("hex"),
+        "--tags", "testing", "--reward", "10", "--deadline", "24",
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain("not reachable");
     }, E2E_TIMEOUT);
 
     test("qa post-premium-question posts premium question", async () => {
