@@ -302,15 +302,12 @@ describe("E2E (anvil fork)", () => {
       const commitR = await runCli("qa", "commit-best", String(qr.json.questionId), "0");
       expect(commitR.exitCode).toBe(0);
       expect(commitR.json.salt).toBeDefined();
-      // runner1/runner2 default to MaxUint256 string; pass through as-is
       const { salt, bestIdx } = commitR.json;
-      const runner1 = String(commitR.json.runner1);
-      const runner2 = String(commitR.json.runner2);
 
       // Advance time for commit-reveal delay
       await increaseTime(60);
 
-      const revealR = await runCli("qa", "reveal-best", String(qr.json.questionId), String(bestIdx), runner1, runner2, salt);
+      const revealR = await runCli("qa", "reveal-best", String(qr.json.questionId), String(bestIdx), "--salt", salt);
       expect(revealR.exitCode).toBe(0);
       expect(revealR.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
     }, E2E_TIMEOUT);
@@ -352,10 +349,8 @@ describe("E2E (anvil fork)", () => {
       await runCli("--wallet", "sub", "qa", "post-answer", qid, uniqueCID());
       const commitR = await runCli("qa", "commit-best", qid, "0");
       const { salt } = commitR.json;
-      const runner1 = String(commitR.json.runner1);
-      const runner2 = String(commitR.json.runner2);
       await increaseTime(60);
-      await runCli("qa", "reveal-best", qid, "0", runner1, runner2, salt);
+      await runCli("qa", "reveal-best", qid, "0", "--salt", salt);
 
       // Without --unsettled: should include the settled question
       const all = await runCli("qa", "search-direct", "--tags", "settled-test", "--max-results", "50");
