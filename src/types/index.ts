@@ -37,6 +37,8 @@ export interface AppConfig {
     wallet: string;
     rpc_url: string;
     chain_id: number;
+    salt_idempotency?: boolean;
+    salt_seed?: string;
   };
   wallet: Record<string, WalletConfig>;
 }

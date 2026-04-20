@@ -37,11 +37,14 @@ export async function loadConfig(): Promise<AppConfig> {
   }
   const content = await readFile(CONFIG_FILE, "utf-8");
   const parsed = parse(content);
+  const def = parsed.default as any;
   return {
     default: {
-      wallet: String((parsed.default as any)?.wallet ?? DEFAULT_CONFIG.default.wallet),
-      rpc_url: String((parsed.default as any)?.rpc_url ?? DEFAULT_CONFIG.default.rpc_url),
-      chain_id: Number((parsed.default as any)?.chain_id ?? DEFAULT_CONFIG.default.chain_id),
+      wallet: String(def?.wallet ?? DEFAULT_CONFIG.default.wallet),
+      rpc_url: String(def?.rpc_url ?? DEFAULT_CONFIG.default.rpc_url),
+      chain_id: Number(def?.chain_id ?? DEFAULT_CONFIG.default.chain_id),
+      ...(def?.salt_idempotency !== undefined && { salt_idempotency: Boolean(def.salt_idempotency) }),
+      ...(def?.salt_seed !== undefined && { salt_seed: String(def.salt_seed) }),
     },
     wallet: (parsed.wallet as unknown as Record<string, WalletConfig>) ?? {},
   };

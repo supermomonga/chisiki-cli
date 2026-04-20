@@ -1,6 +1,7 @@
 import { Command } from "@cliffy/command";
 import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
+import { resolveSalt } from "../lib/salt.js";
 
 // CIDv0: base58btc, always "Qm" + 44 chars from the base58 alphabet
 const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
@@ -119,8 +120,9 @@ export const qaCommand = new Command()
   .option("--salt <salt:string>", "Salt")
   .action(async (options: any, questionId: number, bestIndex: number) => {
     try {
+      const salt = await resolveSalt(options.salt, questionId, bestIndex, options.runner1, options.runner2);
       const sdk = await createSDK(options);
-      const result = await sdk.commitBestAnswer(questionId, bestIndex, options.runner1, options.runner2, options.salt);
+      const result = await sdk.commitBestAnswer(questionId, bestIndex, options.runner1, options.runner2, salt);
       outputResult({ hash: result.hash, salt: result.salt, bestIdx: result.bestIdx, runner1: result.runner1, runner2: result.runner2 }, options);
     } catch (e) {
       outputError(e, options);
@@ -133,14 +135,24 @@ export const qaCommand = new Command()
   .arguments("<question-id:number> <best-index:number>")
   .option("--runner1 <index:number>", "Runner-up 1 index")
   .option("--runner2 <index:number>", "Runner-up 2 index")
-  .option("--salt <salt:string>", "Salt (bytes32 hex from commit-best output)", { required: true })
+  .option("--salt <salt:string>", "Salt (required unless salt-idempotency is enabled)")
   .action(async (options: any, questionId: number, bestIndex: number) => {
     try {
       const { ethers } = await import("ethers");
-      // If salt is already a 0x-prefixed bytes32 hex, use as-is; otherwise hash it
-      const saltBytes32 = /^0x[0-9a-fA-F]{64}$/.test(options.salt)
-        ? options.salt
-        : ethers.keccak256(ethers.toUtf8Bytes(options.salt));
+      let saltBytes32: string;
+      if (options.salt) {
+        // Explicit --salt: if already a 0x-prefixed bytes32 hex, use as-is; otherwise hash it
+        saltBytes32 = /^0x[0-9a-fA-F]{64}$/.test(options.salt)
+          ? options.salt
+          : ethers.keccak256(ethers.toUtf8Bytes(options.salt));
+      } else {
+        const resolvedSalt = await resolveSalt(undefined, questionId, bestIndex, options.runner1, options.runner2);
+        if (!resolvedSalt) {
+          throw new Error("Salt is required. Provide --salt or enable salt-idempotency:\n  chisiki config set default.salt_idempotency true");
+        }
+        // Idempotent salt is a plain string — apply the same keccak256 transform as commitBestAnswer
+        saltBytes32 = ethers.keccak256(ethers.toUtf8Bytes(resolvedSalt));
+      }
       const sdk = await createSDK(options);
       const r1 = options.runner1 != null ? BigInt(options.runner1) : ethers.MaxUint256;
       const r2 = options.runner2 != null ? BigInt(options.runner2) : ethers.MaxUint256;
