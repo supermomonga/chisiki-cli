@@ -1,6 +1,7 @@
 import { Command } from "@cliffy/command";
 import { loadConfig, saveConfig, getConfigPath } from "../lib/config.js";
 import { outputResult, outputError } from "../lib/output.js";
+import { generateSaltSeed } from "../lib/salt.js";
 
 export const configCommand = new Command()
   .description("Configuration management")
@@ -28,14 +29,22 @@ export const configCommand = new Command()
         const field = parts[1] as keyof typeof config.default;
         if (field === "chain_id") {
           (config.default as any)[field] = Number(value);
+        } else if (field === "salt_idempotency") {
+          const enabled = value === "true";
+          config.default.salt_idempotency = enabled;
+          if (enabled && !config.default.salt_seed) {
+            config.default.salt_seed = generateSaltSeed();
+          }
+        } else if (field === "salt_seed") {
+          (config.default as any)[field] = value;
         } else {
           (config.default as any)[field] = value;
         }
       } else {
-        throw new Error(`Unknown config key: ${key}\nAvailable: default.wallet, default.rpc_url, default.chain_id`);
+        throw new Error(`Unknown config key: ${key}\nAvailable: default.wallet, default.rpc_url, default.chain_id, default.salt_idempotency, default.salt_seed`);
       }
       await saveConfig(config);
-      outputResult({ key, value }, options);
+      outputResult({ key, value, ...(key === "default.salt_idempotency" && value === "true" && config.default.salt_seed ? { salt_seed: config.default.salt_seed } : {}) }, options);
     } catch (e) {
       outputError(e, options);
       process.exit(1);
