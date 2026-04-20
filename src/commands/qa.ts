@@ -130,11 +130,21 @@ export const qaCommand = new Command()
   .reset()
   .command("reveal-best")
   .description("Reveal best answer (commit-reveal step 2)")
-  .arguments("<question-id:number> <best-index:number> <runner1:string> <runner2:string> <salt:string>")
-  .action(async (options: any, questionId: number, bestIndex: number, runner1: string, runner2: string, salt: string) => {
+  .arguments("<question-id:number> <best-index:number>")
+  .option("--runner1 <index:number>", "Runner-up 1 index")
+  .option("--runner2 <index:number>", "Runner-up 2 index")
+  .option("--salt <salt:string>", "Salt (bytes32 hex from commit-best output)", { required: true })
+  .action(async (options: any, questionId: number, bestIndex: number) => {
     try {
+      const { ethers } = await import("ethers");
+      // If salt is already a 0x-prefixed bytes32 hex, use as-is; otherwise hash it
+      const saltBytes32 = /^0x[0-9a-fA-F]{64}$/.test(options.salt)
+        ? options.salt
+        : ethers.keccak256(ethers.toUtf8Bytes(options.salt));
       const sdk = await createSDK(options);
-      const result = await sdk.revealBestAnswer(questionId, bestIndex, BigInt(runner1), BigInt(runner2), salt);
+      const r1 = options.runner1 != null ? BigInt(options.runner1) : ethers.MaxUint256;
+      const r2 = options.runner2 != null ? BigInt(options.runner2) : ethers.MaxUint256;
+      const result = await sdk.revealBestAnswer(questionId, bestIndex, r1, r2, saltBytes32);
       outputResult({ txHash: result.hash, blockNumber: result.blockNumber }, options);
     } catch (e) {
       outputError(e, options);
