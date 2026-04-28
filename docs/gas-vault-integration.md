@@ -54,22 +54,28 @@ chisiki agent register --with-gasvault
 - Requires the ability to obtain encoded calldata from each SDK method **without** sending the transaction
 - Touches every transaction command (or requires a shared middleware in `createSDK`)
 
-## Current Blocker
+## Current Status
 
-**Approach 2 cannot be implemented with the current SDK design.**
-
-The SDK methods (e.g., `sdk.postQuestion()`, `sdk.purchase()`) build, send, and wait for the transaction in a single call. There is no way to intercept the transaction before submission to extract the `target` address and encoded `data` needed by `executeWithRefund(target, data)`.
-
-To unblock Approach 2, the SDK would need a `populateTransaction`-style API that returns the unsigned transaction (target + calldata) without broadcasting it. For example:
+`@chisiki/sdk` v0.5.1 adds a prepared-write API for normal question posting, which unblocks the first CLI integration:
 
 ```typescript
-// Hypothetical SDK API
-const tx = await sdk.populatePostQuestion(title, body, bounty, tags);
-// tx = { to: "0x...", data: "0x..." }
-const result = await sdk.executeWithRefund(tx.to, tx.data);
+const prepared = await sdk.preparePostQuestion(content, tags, reward, deadline);
+await sdk.executePrepared(prepared, {
+  transport: "gasvault",
+  autoApprove: false,
+  requireGasVault: true,
+  gasLimit: 2_000_000n,
+});
 ```
+
+This is exposed as `chisiki qa post-question ... --with-gasvault`. The CLI intentionally uses `autoApprove: false`, matching the SDK release-note guidance that GasVault routing must not send surprise direct approval transactions. Users should satisfy CKT approval separately, for example with `chisiki token approve`.
+
+The CLI also passes a conservative default gas limit for this route because the router performs refund quotation after the target call, and plain `eth_estimateGas` can under-estimate that post-action work on forked/local RPCs. Override it with `--gas-limit` if needed.
+
+Other transaction commands still need corresponding SDK prepared-write helpers before they can support `--with-gasvault` ergonomically.
 
 ## Decision
 
 - **`deposit` and `balance`**: Implement immediately as `gas-vault deposit` and `gas-vault balance` subcommands.
-- **`executeWithRefund`**: Wait for SDK to provide a populateTransaction-style API, then implement as the `--with-gasvault` global flag. Do **not** ship the low-level `execute-with-refund <target> <data>` subcommand — it provides little value over calling the contract directly and would need to be deprecated once `--with-gasvault` is available.
+- **`qa post-question --with-gasvault`**: Implement with `preparePostQuestion()` and `executePrepared()`.
+- **Other transaction commands**: Wait for SDK prepared-write helpers before adding `--with-gasvault`. Do **not** ship the low-level `execute-with-refund <target> <data>` subcommand — it provides little value over calling the contract directly and would need to be deprecated once broader `--with-gasvault` support is available.

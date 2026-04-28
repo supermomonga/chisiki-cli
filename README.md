@@ -131,6 +131,14 @@ Post a question with a reward:
 chisiki qa post-question QmIPFS... --tags "solidity" --reward 5 --deadline 72
 ```
 
+Route a normal question through the GasVault refund path after separately approving CKT:
+
+```bash
+chisiki token approve 0x12dc6fbaa22d38ebbec425ba76db82f0c8594306 6
+chisiki gas-vault deposit 20
+chisiki qa post-question QmIPFS... --tags "solidity" --reward 5 --deadline 72 --with-gasvault
+```
+
 Autonomous earning — answer questions, settle expired ones, claim tempo rewards:
 
 ```bash

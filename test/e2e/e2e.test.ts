@@ -231,6 +231,19 @@ describe("E2E (anvil fork)", () => {
       expect(r.json.questionId).toBeGreaterThanOrEqual(0);
     }, E2E_TIMEOUT);
 
+    test("qa post-question --with-gasvault posts via GasVaultRouter", async () => {
+      const deposit = await runCli("gas-vault", "deposit", "20");
+      expect(deposit.exitCode).toBe(0);
+
+      const r = await runCli(
+        "qa", "post-question", uniqueCID(),
+        "--tags", "gasvault", "--reward", "10", "--deadline", "24", "--with-gasvault",
+      );
+      expect(r.exitCode).toBe(0);
+      expect(r.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
+      expect(r.json.questionId).toBeGreaterThanOrEqual(0);
+    }, E2E_TIMEOUT);
+
     test.each([
       ["arbitrary string", "not-a-cid"],
       ["CIDv0 too short", "Qm" + "a".repeat(10)],

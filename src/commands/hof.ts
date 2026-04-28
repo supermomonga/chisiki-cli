@@ -1,4 +1,5 @@
 import { Command } from "@cliffy/command";
+import { ChisikiError } from "@chisiki/sdk";
 import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 
@@ -11,6 +12,10 @@ export const hofCommand = new Command()
   .action(async (options: any, authorAddress: string, contentCid: string, arweaveTxId: string) => {
     try {
       const sdk = await createSDK(options);
+      const agent = await sdk.getAgent();
+      if (agent.tier < 1) {
+        throw new ChisikiError("Tier requirement not met", "E_TIER");
+      }
       const result = await sdk.nominate(authorAddress, contentCid, arweaveTxId);
       outputResult({ txHash: result.hash, blockNumber: result.blockNumber }, options);
     } catch (e) {
