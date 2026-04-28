@@ -260,6 +260,13 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
+  test("qa post-question --help shows GasVault option", async () => {
+    const { stdout, exitCode } = await run("qa", "post-question", "--help");
+    expect(stdout).toContain("--with-gasvault");
+    expect(stdout).toContain("--gas-limit");
+    expect(exitCode).toBe(0);
+  });
+
   test("qa batch-settle --help shows arguments", async () => {
     const { stdout, exitCode } = await run("qa", "batch-settle", "--help");
     expect(stdout).toContain("question-ids");

@@ -11,10 +11,19 @@ export type {
   ReputationMetrics,
   ProtocolRules,
   TxResult,
+  ChisikiTransport,
+  ApprovalRequirement,
+  PreparedWrite,
+  ExecutePreparedOptions,
   PostQuestionResult,
   PostPremiumQuestionResult,
   RegisterResult,
   ListKnowledgeResult,
+  PurchaseKnowledgeResult,
+  DeliveryConfig,
+  QualifiedMerchantStats,
+  PrivateKnowledgeMeta,
+  PurchaseDeliveryState,
   CommitData,
   AutoEarnConfig,
   AutoEarnReport,
@@ -50,6 +59,8 @@ export interface GlobalOptions {
   human?: boolean;
   pretty?: boolean;
   quiet?: boolean;
+  withGasvault?: boolean;
+  gasLimit?: number;
 }
 
 export interface EncryptedWalletFile {

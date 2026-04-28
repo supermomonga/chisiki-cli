@@ -33,7 +33,8 @@ export function getConfigDir(): string {
 // Updated 2026-04-15: block 44_700_000 had incompatible QAEscrow state causing E_TX_REVERTED.
 // Updated 2026-04-17: bumped to 44_800_000 so GasVault / GasVaultRouter contracts are available.
 // Updated 2026-04-20: bumped to 44_850_000 so SDK 0.4.5 GasVault V4 addresses are deployed.
-const FORK_BLOCK_NUMBER = 44_850_000;
+// Updated 2026-04-28: bumped to 44_950_000 so SDK 0.5.x Knowledge v2 module-backed upgrade is available.
+const FORK_BLOCK_NUMBER = 44_950_000;
 
 export async function startAnvil(forkUrl: string = process.env.CHISIKI_RPC_URL ?? "https://mainnet.base.org", port: number = 8545): Promise<void> {
   RPC_URL = `http://127.0.0.1:${port}`;

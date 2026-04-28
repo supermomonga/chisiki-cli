@@ -10,6 +10,15 @@ const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
 const CID_V1 = /^b[a-z2-7]{50,}$/;
 
 const URL_HEAD_TIMEOUT_MS = 5_000;
+const DEFAULT_GASVAULT_GAS_LIMIT = 2_000_000;
+
+function resolveGasVaultGasLimit(value?: number): bigint {
+  const gasLimit = value ?? DEFAULT_GASVAULT_GAS_LIMIT;
+  if (!Number.isSafeInteger(gasLimit) || gasLimit <= 0) {
+    throw new Error(`Invalid gas limit: ${value}`);
+  }
+  return BigInt(gasLimit);
+}
 
 async function assertContentRef(input: string): Promise<void> {
   // http(s) URL: verify reachability with HEAD
@@ -50,11 +59,23 @@ export const qaCommand = new Command()
   .option("--tags <tags:string>", "Question tags (comma-separated)", { required: true })
   .option("--reward <amount:string>", "Reward amount (CKT)", { required: true })
   .option("--deadline <hours:number>", "Answer deadline (hours)", { required: true })
+  .option("--with-gasvault", "Route through GasVaultRouter refund path (requires prior CKT approval)")
+  .option("--gas-limit <units:number>", "Gas limit override for --with-gasvault")
   .action(async (options: any, content: string) => {
     try {
       await assertContentRef(content);
       const sdk = await createSDK(options);
-      const result = await sdk.postQuestion(content, options.tags, options.reward, options.deadline);
+      const result = options.withGasvault
+        ? await sdk.executePrepared(
+            await sdk.preparePostQuestion(content, options.tags, options.reward, options.deadline),
+            {
+              transport: "gasvault",
+              autoApprove: false,
+              requireGasVault: true,
+              gasLimit: resolveGasVaultGasLimit(options.gasLimit),
+            },
+          )
+        : await sdk.postQuestion(content, options.tags, options.reward, options.deadline);
       outputResult({ txHash: result.hash, questionId: result.questionId, blockNumber: result.blockNumber }, options);
     } catch (e) {
       outputError(e, options);
