@@ -5,7 +5,7 @@
     "": {
       "name": "chisiki-cli",
       "dependencies": {
-        "@chisiki/sdk": "0.4.2",
+        "@chisiki/sdk": "0.4.5",
         "@cliffy/command": "npm:@jsr/cliffy__command",
         "@cliffy/table": "npm:@jsr/cliffy__table",
         "smol-toml": "^1.3.1",
@@ -18,7 +18,7 @@
   "packages": {
     "@adraffy/ens-normalize": ["@adraffy/ens-normalize@1.10.1", "", {}, "sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw=="],
 
-    "@chisiki/sdk": ["@chisiki/sdk@0.4.2", "", { "dependencies": { "ethers": "^6.13.0" } }, "sha512-lz3EdPajvO3guDebFp5wmxbROMeUf2T39MS6/0bXRwxouI4YR95bb0KMfIuCaYKhjXogWCzFw1Jux4fpXwt/AA=="],
+    "@chisiki/sdk": ["@chisiki/sdk@0.4.5", "", { "dependencies": { "ethers": "^6.13.0" } }, "sha512-z7TNImalVy2+0IJT3iY0f1VZeMX9CzDvyDo38X993qk5I6/E64QKyfMQpMAcRA8rsj/3YRiBUbq1Sr0PARk8pQ=="],
 
     "@cliffy/command": ["@jsr/cliffy__command@1.0.0", "https://npm.jsr.io/~/11/@jsr/cliffy__command/1.0.0.tgz", { "dependencies": { "@jsr/cliffy__flags": "1.0.0", "@jsr/cliffy__internal": "1.0.0", "@jsr/cliffy__table": "1.0.0", "@jsr/std__fmt": "^1.0.9", "@jsr/std__semver": "^1.0.8", "@jsr/std__text": "^1.0.17" } }, "sha512-oObplVtu1tvpkhgpuPDHZidx9g3axVOfRMQGmw7ZSGxp0+vZIJGiEtpcSvlN0XfuEhOG8neqfVBSSE9txrKanw=="],
 
