@@ -259,6 +259,7 @@ describe("CLI integration", () => {
     expect(stdout).toContain("--limit");
     expect(stdout).toContain("--page");
     expect(stdout).toContain("--order");
+    expect(stdout).toContain("--me");
     expect(stdout).not.toContain("--from-block");
     expect(stdout).not.toContain("--max-results");
     expect(exitCode).toBe(0);

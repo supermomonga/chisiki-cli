@@ -17,6 +17,7 @@ export type QaListOrder = "asc" | "desc";
 
 export interface QaListOptions {
   tags?: string;
+  asker?: string;
   onlyUnsettled?: boolean;
   limit?: number;
   page?: number;
@@ -44,16 +45,17 @@ export async function listQuestionsDirect(sdk: ChisikiSDK, options: QaListOption
   if (limit === 0) return [];
 
   const wantedTags = parseTags(options.tags);
+  const asker = normalizeAddressFilter(options.asker);
   const order = resolveOrder(options.order);
   const page = resolvePage(options.page);
   const offset = (page - 1) * limit;
-  const cache = wantedTags || options.cache !== undefined ? await resolveCache(sdk, options.cache) : null;
+  const cache = wantedTags || asker || options.cache !== undefined ? await resolveCache(sdk, options.cache) : null;
   const nextId = Number(await sdk.qa.nextQuestionId());
   const results: QuestionInfo[] = [];
   const anchor = wantedTags ? await resolveStorageAnchor(sdk, cache) : null;
 
   try {
-    const needsFiltering = !!wantedTags || !!options.onlyUnsettled;
+    const needsFiltering = !!wantedTags || !!asker || !!options.onlyUnsettled;
     if (!needsFiltering) {
       const ids = questionIdsForPage(nextId, offset, limit, order);
       const questions = await Promise.all(ids.map((questionId) => readQuestion(sdk, questionId, cache, anchor)));
@@ -69,6 +71,7 @@ export async function listQuestionsDirect(sdk: ChisikiSDK, options: QaListOption
 
       for (const question of questions) {
         if (!question) continue;
+        if (asker && !matchesAddress(question.asker, asker)) continue;
         if (options.onlyUnsettled && question.settled) continue;
         if (!matchesTags(question.tags, wantedTags)) continue;
         if (skipped < offset) {
@@ -204,6 +207,15 @@ function parseTags(tags?: string): Set<string> | undefined {
 function matchesTags(questionTags: string, wantedTags: Set<string> | undefined): boolean {
   if (!wantedTags) return true;
   return questionTags.split(",").some((tag) => wantedTags.has(tag.trim()));
+}
+
+function normalizeAddressFilter(value?: string): string | undefined {
+  const address = value?.trim();
+  return address ? address.toLowerCase() : undefined;
+}
+
+function matchesAddress(actual: string, expectedLowercase: string): boolean {
+  return actual.toLowerCase() === expectedLowercase;
 }
 
 function resolveLimit(value?: number): number {

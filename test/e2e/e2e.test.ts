@@ -375,6 +375,22 @@ describe("E2E (anvil fork)", () => {
       expect(json.length).toBeGreaterThanOrEqual(1);
     }, E2E_TIMEOUT);
 
+    test("qa list --me returns only current wallet questions", async () => {
+      const main = await runCli("qa", "post-question", uniqueCID(), "--tags", "me-main", "--reward", "10", "--deadline", "24");
+      const sub = await runCli("--wallet", "sub", "qa", "post-question", uniqueCID(), "--tags", "me-sub", "--reward", "10", "--deadline", "24");
+      expect(main.exitCode).toBe(0);
+      expect(sub.exitCode).toBe(0);
+
+      const { json, exitCode } = await runCli("qa", "list", "--me", "--limit", "1");
+
+      expect(exitCode).toBe(0);
+      expect(json).toBeArray();
+      const ids = json.map((q: any) => Number(q.id));
+      expect(ids).toEqual([Number(main.json.questionId)]);
+      expect(ids).not.toContain(Number(sub.json.questionId));
+      expect(json.every((q: any) => q.asker.toLowerCase() === TEST_ACCOUNTS[0].address.toLowerCase())).toBe(true);
+    }, E2E_TIMEOUT);
+
     test("qa list without --unsettled returns settled questions", async () => {
       // Post, answer, and settle a question
       const qr = await runCli("qa", "post-question", uniqueCID(), "--tags", "settled-test", "--reward", "10", "--deadline", "24");
