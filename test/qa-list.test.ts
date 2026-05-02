@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createEmptyQaQuestionCache, rememberQuestionFromEvent } from "../src/lib/qa-cache.js";
-import { listQuestions, listQuestionsDirect } from "../src/lib/qa-list.js";
+import { getQuestion, listQuestions, listQuestionsDirect } from "../src/lib/qa-list.js";
 
 describe("qa list helpers", () => {
   test("lists newest questions first by default with default limit 10", async () => {
@@ -107,6 +107,40 @@ describe("qa list helpers", () => {
     expect(sdk.questionReads).toContain(2);
     expect(cache.questions["2"].tags).toBe("foo");
     expect(cache.questions["2"].discoveredBlockHash).toBe("0x20000");
+  });
+
+  test("gets one question by ID", async () => {
+    const sdk = makeSdk({
+      latestBlock: 20_000,
+      logs: [],
+      questions: [
+        question(0, "foo"),
+        question(1, "bar", { settled: true }),
+      ],
+    });
+
+    const result = await getQuestion(sdk, 1);
+
+    expect(result).toMatchObject({
+      id: 1,
+      tags: "bar",
+      settled: true,
+      answerCount: 0,
+      isPremium: false,
+    });
+    expect(sdk.questionReads).toEqual([1]);
+  });
+
+  test("rejects invalid question IDs", async () => {
+    const sdk = makeSdk({
+      latestBlock: 20_000,
+      logs: [],
+      questions: [question(0, "foo")],
+    });
+
+    await expect(getQuestion(sdk, -1)).rejects.toThrow("Invalid question ID: -1");
+    await expect(getQuestion(sdk, 1)).rejects.toThrow("Question not found: 1");
+    expect(sdk.questionReads).toEqual([]);
   });
 });
 

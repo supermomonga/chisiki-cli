@@ -66,6 +66,7 @@ describe("CLI integration", () => {
     expect(stdout).toContain("withdraw");
     expect(stdout).toContain("auto-settle");
     expect(stdout).toContain("list");
+    expect(stdout).toContain("show");
     expect(stdout).not.toContain("search-direct");
     expect(stdout).toContain("batch-settle");
     expect(exitCode).toBe(0);
@@ -260,6 +261,12 @@ describe("CLI integration", () => {
     expect(stdout).toContain("--order");
     expect(stdout).not.toContain("--from-block");
     expect(stdout).not.toContain("--max-results");
+    expect(exitCode).toBe(0);
+  });
+
+  test("qa show --help shows arguments", async () => {
+    const { stdout, exitCode } = await run("qa", "show", "--help");
+    expect(stdout).toContain("question-id");
     expect(exitCode).toBe(0);
   });
 
