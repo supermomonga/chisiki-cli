@@ -49,6 +49,29 @@ describe("qa list helpers", () => {
     expect(results.map((q) => q.id)).toEqual([1, 0]);
   });
 
+  test("direct search filters by asker before pagination", async () => {
+    const cache = createEmptyQaQuestionCache();
+    const asker = "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    const other = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
+    const sdk = makeSdk({
+      latestBlock: 20_000,
+      logs: [],
+      questions: [
+        question(0, "foo", { asker }),
+        question(1, "foo", { asker: other }),
+        question(2, "foo", { asker }),
+        question(3, "foo", { asker: other }),
+        question(4, "foo", { asker }),
+      ],
+    });
+
+    const firstPage = await listQuestionsDirect(sdk, { asker: asker.toLowerCase(), limit: 2, cache });
+    const secondPage = await listQuestionsDirect(sdk, { asker: asker.toLowerCase(), limit: 2, page: 2, cache });
+
+    expect(firstPage.map((q) => q.id)).toEqual([4, 2]);
+    expect(secondPage.map((q) => q.id)).toEqual([0]);
+  });
+
   test("direct search without filters reads only the requested number of questions", async () => {
     const cache = createEmptyQaQuestionCache();
     const sdk = makeSdk({
@@ -185,10 +208,14 @@ function makeSdk(input: {
   return sdk;
 }
 
-function question(id: number, tags: string, overrides: { settled?: boolean } = {}): Record<string, unknown> & { id: number } {
+function question(
+  id: number,
+  tags: string,
+  overrides: { asker?: string; settled?: boolean } = {},
+): Record<string, unknown> & { id: number } {
   return {
     id,
-    asker: "0x0000000000000000000000000000000000000001",
+    asker: overrides.asker ?? "0x0000000000000000000000000000000000000001",
     ipfsCID: `Qm${id}`,
     tags,
     reward: 1n,

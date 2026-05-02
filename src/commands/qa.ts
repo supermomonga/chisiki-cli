@@ -221,11 +221,13 @@ export const qaCommand = new Command()
   .option("--limit <n:number>", "Results per page")
   .option("--page <n:number>", "Page number")
   .option("--order <order:string>", "Sort order by question ID (asc|desc)")
+  .option("--me", "Only questions asked by the current wallet")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
       const results = await listQuestions(sdk, {
         tags: options.tags,
+        asker: options.me ? sdk.address : undefined,
         onlyUnsettled: !!options.unsettled,
         limit: options.limit,
         page: options.page,

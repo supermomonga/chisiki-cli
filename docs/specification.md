@@ -231,6 +231,7 @@ chisiki qa auto-settle <question-id>
 
 chisiki qa list
   [--tags <tag1,tag2,...>]
+  [--me]
   [--unsettled]
   [--limit <n>]        デフォルト: 10
   [--page <n>]         デフォルト: 1
