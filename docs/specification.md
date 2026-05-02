@@ -230,12 +230,13 @@ chisiki qa withdraw <question-id>
 chisiki qa auto-settle <question-id>
   期限切れ質問の自動決済（1 CKT キーパー報酬）
 
-chisiki qa search
+chisiki qa list
   [--tags <tag1,tag2,...>]
   [--unsettled]
-  [--from-block <block>]
-  [--max-results <n>]
-  質問を検索
+  [--limit <n>]        デフォルト: 10
+  [--page <n>]         デフォルト: 1
+  [--order <asc|desc>] デフォルト: desc
+  質問を一覧
 ```
 
 ### 8.4 `chisiki knowledge` — ナレッジストア

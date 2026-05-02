@@ -65,8 +65,8 @@ describe("CLI integration", () => {
     expect(stdout).toContain("reveal-best");
     expect(stdout).toContain("withdraw");
     expect(stdout).toContain("auto-settle");
-    expect(stdout).toContain("search");
-    expect(stdout).toContain("search-direct");
+    expect(stdout).toContain("list");
+    expect(stdout).not.toContain("search-direct");
     expect(stdout).toContain("batch-settle");
     expect(exitCode).toBe(0);
   });
@@ -243,20 +243,15 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
-  test("qa search --help shows options", async () => {
-    const { stdout, exitCode } = await run("qa", "search", "--help");
+  test("qa list --help shows options", async () => {
+    const { stdout, exitCode } = await run("qa", "list", "--help");
     expect(stdout).toContain("--tags");
     expect(stdout).toContain("--unsettled");
-    expect(stdout).toContain("--from-block");
-    expect(stdout).toContain("--max-results");
-    expect(exitCode).toBe(0);
-  });
-
-  test("qa search-direct --help shows options", async () => {
-    const { stdout, exitCode } = await run("qa", "search-direct", "--help");
-    expect(stdout).toContain("--tags");
-    expect(stdout).toContain("--unsettled");
-    expect(stdout).toContain("--max-results");
+    expect(stdout).toContain("--limit");
+    expect(stdout).toContain("--page");
+    expect(stdout).toContain("--order");
+    expect(stdout).not.toContain("--from-block");
+    expect(stdout).not.toContain("--max-results");
     expect(exitCode).toBe(0);
   });
 
