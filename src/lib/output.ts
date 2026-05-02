@@ -1,12 +1,10 @@
 import { Table } from "@cliffy/table";
-import type { GlobalOptions } from "../types/index.js";
+import type { GlobalOptions, OutputFormat } from "../types/index.js";
 
 export function outputResult(data: unknown, options: GlobalOptions): void {
   if (options.quiet) return;
-  if (options.human) {
-    outputHuman(data);
-  } else if (options.pretty) {
-    process.stdout.write(JSON.stringify(data, bigintReplacer, 2) + "\n");
+  if (resolveOutputFormat(options, process.stdout) === "pretty") {
+    outputPretty(data);
   } else {
     process.stdout.write(JSON.stringify(data, bigintReplacer) + "\n");
   }
@@ -15,7 +13,7 @@ export function outputResult(data: unknown, options: GlobalOptions): void {
 export function outputError(error: unknown, options: GlobalOptions): void {
   if (options.quiet) return;
   const err = normalizeError(error);
-  if (options.human) {
+  if (resolveOutputFormat(options, process.stderr) === "pretty") {
     if (err.error) {
       process.stderr.write(`Error [${err.error}]: ${err.message}\n`);
     } else {
@@ -24,6 +22,11 @@ export function outputError(error: unknown, options: GlobalOptions): void {
   } else {
     process.stderr.write(JSON.stringify(err, bigintReplacer) + "\n");
   }
+}
+
+export function resolveOutputFormat(options: GlobalOptions, stream: { isTTY?: boolean }): OutputFormat {
+  if (options.format) return options.format;
+  return stream.isTTY === true ? "pretty" : "json";
 }
 
 function normalizeError(error: unknown): { error?: string; message: string; [key: string]: unknown } {
@@ -47,7 +50,7 @@ function extractExtra(e: any): Record<string, unknown> {
   return extra;
 }
 
-function outputHuman(data: unknown): void {
+function outputPretty(data: unknown): void {
   if (Array.isArray(data)) {
     if (data.length === 0) {
       process.stdout.write("(no results)\n");

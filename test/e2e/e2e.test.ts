@@ -543,8 +543,8 @@ describe("E2E (anvil fork)", () => {
   // ═══════════════════════════════════════════════════════════
 
   describe("output formats", () => {
-    test("--pretty outputs formatted JSON", async () => {
-      const { stdout, exitCode } = await runCli("token", "balance", "--pretty");
+    test("--format=json outputs JSON", async () => {
+      const { stdout, exitCode } = await runCli("token", "balance", "--format=json");
       expect(exitCode).toBe(0);
       expect(stdout).toContain('"balance"');
     }, E2E_TIMEOUT);
@@ -555,8 +555,8 @@ describe("E2E (anvil fork)", () => {
       expect(stdout.trim()).toBe("");
     }, E2E_TIMEOUT);
 
-    test("--human outputs table format", async () => {
-      const { stdout, exitCode } = await runCli("token", "balance", "--human");
+    test("--format=pretty outputs table format", async () => {
+      const { stdout, exitCode } = await runCli("token", "balance", "--format=pretty");
       expect(exitCode).toBe(0);
       expect(stdout).toContain("balance");
       expect(stdout).toMatch(/[┌┐└┘│─]/);
@@ -599,8 +599,8 @@ describe("E2E (anvil fork)", () => {
       expect(parsed).toHaveProperty("message");
     }, E2E_TIMEOUT);
 
-    test("--human error outputs readable format", async () => {
-      const { exitCode, stderr } = await runCli("agent", "upgrade-tier", "--human");
+    test("--format=pretty error outputs readable format", async () => {
+      const { exitCode, stderr } = await runCli("agent", "upgrade-tier", "--format=pretty");
       expect(exitCode).toBe(1);
       expect(stderr).toMatch(/^Error/);
     }, E2E_TIMEOUT);
