@@ -236,6 +236,9 @@ chisiki qa list
   [--page <n>]         デフォルト: 1
   [--order <asc|desc>] デフォルト: desc
   質問を一覧
+
+chisiki qa show <question-id>
+  質問IDを指定して質問の詳細を取得
 ```
 
 ### 8.4 `chisiki knowledge` — ナレッジストア

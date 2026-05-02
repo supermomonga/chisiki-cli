@@ -128,6 +128,7 @@ Post a question with a reward:
 
 ```bash
 chisiki qa post-question QmIPFS... --tags "solidity" --reward 5 --deadline 72
+chisiki qa show 42
 ```
 
 Route a normal question through the GasVault refund path after separately approving CKT:

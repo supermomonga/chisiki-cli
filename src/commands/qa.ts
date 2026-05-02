@@ -2,7 +2,7 @@ import { Command } from "@cliffy/command";
 import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 import { resolveSalt } from "../lib/salt.js";
-import { listQuestions } from "../lib/qa-list.js";
+import { getQuestion, listQuestions } from "../lib/qa-list.js";
 
 // CIDv0: base58btc, always "Qm" + 44 chars from the base58 alphabet
 const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
@@ -232,6 +232,20 @@ export const qaCommand = new Command()
         order: options.order,
       });
       outputResult(results, options);
+    } catch (e) {
+      outputError(e, options);
+      process.exit(1);
+    }
+  })
+  .reset()
+  .command("show")
+  .description("Show a question")
+  .arguments("<question-id:number>")
+  .action(async (options: any, questionId: number) => {
+    try {
+      const sdk = await createSDK(options);
+      const result = await getQuestion(sdk, questionId);
+      outputResult(result, options);
     } catch (e) {
       outputError(e, options);
       process.exit(1);

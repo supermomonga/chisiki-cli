@@ -28,6 +28,17 @@ export async function listQuestions(sdk: ChisikiSDK, options: QaListOptions): Pr
   return listQuestionsDirect(sdk, options);
 }
 
+export async function getQuestion(sdk: ChisikiSDK, id: number): Promise<QuestionInfo> {
+  assertQuestionId(id);
+
+  const nextId = await sdk.qa.nextQuestionId();
+  if (BigInt(id) >= nextId) {
+    throw new Error(`Question not found: ${id}`);
+  }
+
+  return readQuestionInfo(sdk, id, null, null);
+}
+
 export async function listQuestionsDirect(sdk: ChisikiSDK, options: QaListOptions): Promise<QuestionInfo[]> {
   const limit = resolveLimit(options.limit);
   if (limit === 0) return [];
@@ -82,23 +93,32 @@ async function readQuestion(
   anchor: CacheAnchor | null,
 ): Promise<QuestionInfo | null> {
   try {
-    const q = await sdk.qa.questions(id);
-    rememberQuestionFromStorage(cache, id, q, anchor ?? undefined);
-    return {
-      id,
-      asker: q.asker,
-      ipfsCID: q.ipfsCID,
-      tags: q.tags,
-      reward: q.reward,
-      deadline: q.deadline,
-      createdAt: q.createdAt,
-      settled: q.settled,
-      answerCount: Number(q.answerCount),
-      isPremium: q.isPremium ?? false,
-    };
+    return await readQuestionInfo(sdk, id, cache, anchor);
   } catch {
     return null;
   }
+}
+
+async function readQuestionInfo(
+  sdk: ChisikiSDK,
+  id: number,
+  cache: QaQuestionCache | null,
+  anchor: CacheAnchor | null,
+): Promise<QuestionInfo> {
+  const q = await sdk.qa.questions(id);
+  rememberQuestionFromStorage(cache, id, q, anchor ?? undefined);
+  return {
+    id,
+    asker: q.asker,
+    ipfsCID: q.ipfsCID,
+    tags: q.tags,
+    reward: q.reward,
+    deadline: q.deadline,
+    createdAt: q.createdAt,
+    settled: q.settled,
+    answerCount: Number(q.answerCount),
+    isPremium: q.isPremium ?? false,
+  };
 }
 
 async function filterIdsByCachedTags(
@@ -208,6 +228,12 @@ function resolveOrder(value?: string): QaListOrder {
     throw new Error(`Invalid order: ${value}. Expected "asc" or "desc"`);
   }
   return order;
+}
+
+function assertQuestionId(value: number): void {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new Error(`Invalid question ID: ${value}`);
+  }
 }
 
 function questionIdsForPage(nextId: number, offset: number, limit: number, order: QaListOrder): number[] {

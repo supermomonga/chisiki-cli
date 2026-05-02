@@ -222,6 +222,27 @@ describe("E2E (anvil fork)", () => {
       expect(r.json.questionId).toBeGreaterThanOrEqual(0);
     }, E2E_TIMEOUT);
 
+    test("qa show returns a posted question", async () => {
+      const cid = uniqueCID();
+      const posted = await runCli(
+        "qa", "post-question", cid,
+        "--tags", "show-test", "--reward", "10", "--deadline", "24",
+      );
+      expect(posted.exitCode).toBe(0);
+
+      const shown = await runCli("qa", "show", String(posted.json.questionId));
+
+      expect(shown.exitCode).toBe(0);
+      expect(shown.json).toMatchObject({
+        id: posted.json.questionId,
+        ipfsCID: cid,
+        tags: "show-test",
+        answerCount: 0,
+        settled: false,
+        isPremium: false,
+      });
+    }, E2E_TIMEOUT);
+
     test("qa post-question accepts ipfs:// prefix", async () => {
       const r = await runCli(
         "qa", "post-question", "ipfs://" + uniqueCID(),
