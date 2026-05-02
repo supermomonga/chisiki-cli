@@ -2,6 +2,7 @@ import { Command } from "@cliffy/command";
 import { createSDK } from "../lib/sdk.js";
 import { outputResult, outputError } from "../lib/output.js";
 import { resolveSalt } from "../lib/salt.js";
+import { listQuestions } from "../lib/qa-list.js";
 
 // CIDv0: base58btc, always "Qm" + 44 chars from the base58 alphabet
 const CID_V0 = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
@@ -213,32 +214,23 @@ export const qaCommand = new Command()
     }
   })
   .reset()
-  .command("search")
-  .description("Search questions (eth_getLogs based)")
+  .command("list")
+  .description("List questions")
   .option("--tags <tags:string>", "Tag filter")
   .option("--unsettled", "Unsettled only")
-  .option("--from-block <block:number>", "Start block")
-  .option("--max-results <n:number>", "Max results")
+  .option("--limit <n:number>", "Results per page")
+  .option("--page <n:number>", "Page number")
+  .option("--order <order:string>", "Sort order by question ID (asc|desc)")
   .action(async (options: any) => {
     try {
       const sdk = await createSDK(options);
-      const results = await sdk.searchQuestions(options.tags, !!options.unsettled, options.fromBlock, options.maxResults);
-      outputResult(results, options);
-    } catch (e) {
-      outputError(e, options);
-      process.exit(1);
-    }
-  })
-  .reset()
-  .command("search-direct")
-  .description("Search questions (on-chain counter, free RPC compatible)")
-  .option("--tags <tags:string>", "Tag filter")
-  .option("--unsettled", "Unsettled only")
-  .option("--max-results <n:number>", "Max results")
-  .action(async (options: any) => {
-    try {
-      const sdk = await createSDK(options);
-      const results = await sdk.searchQuestionsDirect(options.tags, !!options.unsettled, options.maxResults);
+      const results = await listQuestions(sdk, {
+        tags: options.tags,
+        onlyUnsettled: !!options.unsettled,
+        limit: options.limit,
+        page: options.page,
+        order: options.order,
+      });
       outputResult(results, options);
     } catch (e) {
       outputError(e, options);

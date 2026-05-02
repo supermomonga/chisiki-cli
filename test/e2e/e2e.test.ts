@@ -346,15 +346,15 @@ describe("E2E (anvil fork)", () => {
       expect(r.json.txHash).toMatch(/^0x[0-9a-f]{64}$/);
     }, E2E_TIMEOUT);
 
-    test("qa search with --from-block returns results", async () => {
+    test("qa list returns results", async () => {
       await runCli("qa", "post-question", uniqueCID(), "--tags", "srch", "--reward", "10", "--deadline", "24");
-      const { json, exitCode } = await runCli("qa", "search", "--from-block", String(setupBlock), "--max-results", "5");
+      const { json, exitCode } = await runCli("qa", "list", "--limit", "5");
       expect(exitCode).toBe(0);
       expect(json).toBeArray();
       expect(json.length).toBeGreaterThanOrEqual(1);
     }, E2E_TIMEOUT);
 
-    test("qa search without --unsettled returns settled questions", async () => {
+    test("qa list without --unsettled returns settled questions", async () => {
       // Post, answer, and settle a question
       const qr = await runCli("qa", "post-question", uniqueCID(), "--tags", "settled-test", "--reward", "10", "--deadline", "24");
       expect(qr.exitCode).toBe(0);
@@ -366,14 +366,14 @@ describe("E2E (anvil fork)", () => {
       await runCli("qa", "reveal-best", qid, "0", "--salt", salt);
 
       // Without --unsettled: should include the settled question
-      const all = await runCli("qa", "search-direct", "--tags", "settled-test", "--max-results", "50");
+      const all = await runCli("qa", "list", "--tags", "settled-test", "--limit", "50");
       expect(all.exitCode).toBe(0);
       expect(all.json).toBeArray();
       const allIds = all.json.map((q: any) => Number(q.id));
       expect(allIds).toContain(Number(qid));
 
       // With --unsettled: should NOT include the settled question
-      const unsettled = await runCli("qa", "search-direct", "--tags", "settled-test", "--unsettled", "--max-results", "50");
+      const unsettled = await runCli("qa", "list", "--tags", "settled-test", "--unsettled", "--limit", "50");
       expect(unsettled.exitCode).toBe(0);
       expect(unsettled.json).toBeArray();
       const unsettledIds = unsettled.json.map((q: any) => Number(q.id));
