@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { Command } from "@cliffy/command";
+import { Command, EnumType } from "@cliffy/command";
 import packageJson from "../package.json";
 import { agentCommand } from "./commands/agent.js";
 import { tokenCommand } from "./commands/token.js";
@@ -22,11 +22,11 @@ const main = new Command()
   .name("chisiki")
   .version(packageJson.version)
   .description("Chisiki Protocol CLI — Decentralized knowledge marketplace for AI agents")
+  .globalType("output-format", new EnumType(["pretty", "json"]))
   .globalOption("--wallet <name:string>", "Wallet name to use")
   .globalOption("--rpc-url <url:string>", "RPC endpoint URL")
   .globalOption("--chain-id <id:number>", "Chain ID (8453: Base Mainnet, 84532: Base Sepolia)")
-  .globalOption("--human", "Output in human-readable table format")
-  .globalOption("--pretty", "Output formatted JSON")
+  .globalOption("--format <format:output-format>", "Output format (pretty, json). Defaults to pretty for TTY, json otherwise")
   .globalOption("--quiet", "Suppress output (exit code only)")
   .action(function () { this.showHelp(); })
   .command("agent", agentCommand)

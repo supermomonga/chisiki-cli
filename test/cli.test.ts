@@ -162,12 +162,19 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
-  test("config path --pretty outputs formatted JSON", async () => {
-    const { stdout, exitCode } = await run("config", "path", "--pretty");
-    expect(stdout).toContain("  ");
+  test("config path --format=json outputs JSON", async () => {
+    const { stdout, exitCode } = await run("config", "path", "--format=json");
     const parsed = JSON.parse(stdout.trim());
     expect(parsed.path).toContain("config.toml");
     expect(exitCode).toBe(0);
+  });
+
+  test("deprecated output flags are rejected", async () => {
+    for (const flag of ["--human", "--pretty"]) {
+      const { stderr, exitCode } = await run("config", "path", flag);
+      expect(exitCode).not.toBe(0);
+      expect(stderr).toContain(flag);
+    }
   });
 
   test("global options are shown in subcommands", async () => {
@@ -175,8 +182,9 @@ describe("CLI integration", () => {
     expect(stdout).toContain("--wallet");
     expect(stdout).toContain("--rpc-url");
     expect(stdout).toContain("--chain-id");
-    expect(stdout).toContain("--human");
-    expect(stdout).toContain("--pretty");
+    expect(stdout).toContain("--format");
+    expect(stdout).not.toContain("--human");
+    expect(stdout).not.toContain("--pretty");
     expect(stdout).toContain("--quiet");
   });
 

@@ -10,7 +10,7 @@ Wraps the full `@chisiki/sdk` (56 methods) as shell commands. Designed for **aut
 ## Features
 
 - **16 command groups, ~80 subcommands** covering the entire Chisiki Protocol surface
-- **JSON-first output** — machine-readable by default, `--human` for table view
+- **Adaptive output** — `--format=pretty` for TTY table view, `--format=json` for machine-readable output
 - **Multi-wallet support** — AWS CLI-style profile switching with `--wallet <name>`
 - **Encrypted key storage** — AES-256-GCM with PBKDF2 (100k iterations), no OS keychain prompts
 - **Fully non-interactive** — every operation works via env vars and CLI args
@@ -89,8 +89,7 @@ chisiki <command> <subcommand> [options]
 | `--wallet <name>` | Select wallet (default from config) |
 | `--rpc-url <url>` | RPC endpoint URL |
 | `--chain-id <id>` | Chain ID (`8453` Base Mainnet, `84532` Base Sepolia) |
-| `--human` | Table format output |
-| `--pretty` | Pretty-print JSON |
+| `--format <pretty\|json>` | Output format (defaults to `pretty` for TTY, `json` otherwise) |
 | `--quiet` | Suppress output (exit code only) |
 
 ### Commands
@@ -158,7 +157,7 @@ chisiki listen purchases | jq '.buyerAddress'
 Check your full protocol status:
 
 ```bash
-chisiki protocol my-status --human
+chisiki protocol my-status --format=pretty
 ```
 
 ## Configuration
@@ -207,7 +206,7 @@ src/
 │   ├── sdk.ts           # ChisikiSDK instantiation wrapper
 │   ├── wallet-store.ts  # Encrypted wallet file management
 │   ├── config.ts        # TOML config read/write
-│   └── output.ts        # JSON / table output formatting
+│   └── output.ts        # JSON / pretty table output formatting
 └── types/
     └── index.ts         # Type definitions
 ```

@@ -114,21 +114,21 @@ chisiki agent status  # default.wallet を使用
 
 ## 6. 出力形式
 
-### 6.1 デフォルト: JSON
+### 6.1 デフォルト: TTY に応じた自動判定
 
-AI エージェントの利用を第一に想定し、デフォルト出力は JSON とする。
+`--format` 未指定時は、出力先が TTY の場合は `pretty`、TTY ではない場合は `json` とする。これにより、人間が端末で実行した場合は読みやすい表示になり、パイプや自動処理では機械可読な JSON になる。
 
 ```bash
-$ chisiki agent status
+$ chisiki agent status | jq .
 {"name":"agent1","tier":2,"balance":"150.5","tags":["defi","analysis"]}
 ```
 
-### 6.2 人間向け: --human フラグ
+### 6.2 出力形式: --format
 
-`--human` フラグで人間が読みやすいテーブル形式に切り替える。
+`--format=pretty` で人間が読みやすいテーブル形式に切り替える。`--format=json` はコンパクトな JSON を 1 行で出力する。旧 `--pretty` 相当の JSON 整形は CLI 側では提供せず、必要な場合は `--format=json` と `jq` などの外部コマンドを組み合わせる。
 
 ```bash
-$ chisiki agent status --human
+$ chisiki agent status --format=pretty
 ┌──────────┬──────────────────┐
 │ Name     │ agent1           │
 │ Tier     │ 2                │
@@ -139,7 +139,7 @@ $ chisiki agent status --human
 
 ### 6.3 共通出力ルール
 
-- JSON 出力は 1 行（`--pretty` で整形可能）
+- JSON 出力は 1 行
 - エラーは stderr に出力、正常結果は stdout に出力
 - トランザクション結果には `txHash` を必ず含める
 - 成功時の exit code は 0、エラー時は 1
@@ -152,8 +152,7 @@ $ chisiki agent status --human
 --wallet <name>       使用するウォレット名
 --rpc-url <url>       RPC エンドポイント URL
 --chain-id <id>       チェーン ID (8453: Base Mainnet, 84532: Base Sepolia)
---human               人間向けテーブル形式で出力
---pretty              JSON を整形して出力
+--format <format>     出力形式 (pretty, json)。未指定時は TTY なら pretty、非 TTY なら json
 --quiet               出力を抑制（exit code のみ）
 --help                ヘルプを表示
 --version             バージョンを表示
@@ -461,8 +460,8 @@ SDK は以下の 13 種類のエラーコードを定義している：
 $ chisiki agent upgrade-tier 2>/dev/null || true
 # stderr: {"error":"E_BAL","message":"CKT残高が不足しています","required":"5","current":"2.3"}
 
-# --human フラグ付き
-$ chisiki agent upgrade-tier --human
+# --format=pretty
+$ chisiki agent upgrade-tier --format=pretty
 # stderr: Error [E_BAL]: CKT残高が不足しています (必要: 5 CKT, 現在: 2.3 CKT)
 ```
 
@@ -516,7 +515,7 @@ chisiki-cli/
 | パッケージ | 用途 |
 |-----------|------|
 | `@cliffy/command` | CLI フレームワーク |
-| `@cliffy/table` | テーブル出力（--human 用） |
+| `@cliffy/table` | `--format=pretty` のテーブル出力 |
 | `@chisiki/sdk` | Chisiki Protocol SDK |
 | `smol-toml` | TOML パーサー |
 

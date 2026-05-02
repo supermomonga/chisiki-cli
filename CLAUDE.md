@@ -32,11 +32,11 @@ bun build                # ビルド
 - `src/lib/sdk.ts` — ChisikiSDK のインスタンス化ラッパー。ウォレット解決 → 秘密鍵復号 → SDK 初期化を担当
 - `src/lib/wallet-store.ts` — AES-256-GCM 暗号化ウォレットファイルの読み書き。PBKDF2 (100k iterations) でマスターパスワードから鍵導出
 - `src/lib/config.ts` — `~/.config/chisiki-cli/config.toml` の読み書き
-- `src/lib/output.ts` — JSON (デフォルト) / テーブル (`--human`) の出力切り替え
+- `src/lib/output.ts` — JSON / pretty テーブル (`--format`) の出力切り替え
 
 ## Key Design Decisions
 
-- **出力はデフォルト JSON**。`--human` でテーブル表示。`--pretty` で JSON 整形。エラーは stderr、結果は stdout
+- **出力は `--format` で制御**。未指定時は TTY なら `pretty`、非 TTY なら `json`。JSON 整形は `jq` など外部コマンドに委ねる。エラーは stderr、結果は stdout
 - **秘密鍵は暗号化ファイル** (`~/.config/chisiki-cli/wallets.enc`) に保存。OS キーチェーンは AI エージェントの自律利用時に毎回人間の確認が入るため不採用
 - **マスターパスワード**: 環境変数 `CHISIKI_MASTER_PASSWORD` > 対話プロンプト の優先順
 - **設定優先順位**: CLI 引数 > 環境変数 > config.toml > デフォルト値

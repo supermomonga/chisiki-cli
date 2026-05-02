@@ -52,12 +52,13 @@ export interface AppConfig {
   wallet: Record<string, WalletConfig>;
 }
 
+export type OutputFormat = "pretty" | "json";
+
 export interface GlobalOptions {
   wallet?: string;
   rpcUrl?: string;
   chainId?: number;
-  human?: boolean;
-  pretty?: boolean;
+  format?: OutputFormat;
   quiet?: boolean;
   withGasvault?: boolean;
   gasLimit?: number;
